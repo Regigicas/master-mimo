@@ -1,0 +1,62 @@
+table
+{
+    border-collapse: collapse;
+    border-style: hidden;
+    width: 30%;
+    table-layout: fixed;
+}
+
+table td, table th
+{
+    border: 1px solid black;
+    text-align: center;
+}
+
+td
+{
+    height: 60px;
+}
+
+#tablero
+{
+    padding-bottom: 10px;
+}
+
+.espaciado, #resultado
+{
+    margin-top: 10px;
+}
+
+.oculto
+{
+    display: none;
+}
+
+.fuenteAumentada
+{
+    font-size: 20px;
+}
+
+.bloqueLinea
+{
+    display: inline-block;
+}
+
+#jugadores
+{
+    display: none;
+}
+
+.centrarDiv
+{
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    padding: 10px;
+}
+
+.centrarTabla
+{
+    margin-left:auto; 
+    margin-right:auto;
+}

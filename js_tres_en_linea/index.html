@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tres en linea</title>
+    <script src="index.js" defer></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="centrarDiv">
+        <h2 id="turno"></h2>
+        <h2 id="configurar">¡Configura el modo de juego y dale a jugar!</h2>
+
+        <div id="tablero"></div>
+
+        <div id="jugadores" class="espaciado">
+            <span id="jugador1"></span>
+            <span>&emsp;-&emsp;</span>
+            <span id="jugador2"></span>
+        </div>
+
+        <div class="oculto" id="divReiniciar">
+            <button class="espaciado" id="botonReiniciar" onclick="reiniciarPartida();">Reiniciar partida</button>
+        </div>
+
+        <div id="divJugar">
+            <button class="espaciado" onclick="iniciarPartida();">Iniciar partida</button>
+            <fieldset class="espaciado bloqueLinea" id="estadoIA">
+                <input type="radio" name="modoJuego" value="0" checked> <label>Sin IA</label>
+                <input type="radio" name="modoJuego" value="1"> <label>Con IA</label>
+            </fieldset>
+            <fieldset class="espaciado bloqueLinea" id="dificultadIA">
+                <input type="radio" name="dificultad" value="0" checked> <label>IA Facil</label>
+                <input type="radio" name="dificultad" value="1"> <label>IA Avanzada</label>
+            </fieldset>
+        </div>
+
+        <span id="resultado"></span>
+    </div>
+</body>
+</html>
