@@ -148,7 +148,7 @@ class Tablero
             for (let j = 0; j < this.dimension; ++j)
             {
                 sum += this.casillas[i][j].mod;
-                if (this.casillas[i][j] == Jugadores.Vacio)
+                if (this.casillas[i][j] === Jugadores.Vacio)
                     casillasLibres.push(j);
             }
 
@@ -162,7 +162,7 @@ class Tablero
             for (let i = 0; i < this.dimension; ++i)
             {
                 sum += this.casillas[i][j].mod;
-                if (this.casillas[i][j] == Jugadores.Vacio)
+                if (this.casillas[i][j] === Jugadores.Vacio)
                     casillasLibres.push(j);
             }
 
@@ -176,7 +176,7 @@ class Tablero
         for (let i = 0,  j = 0; i < this.dimension; ++i, ++j)
         {
             sum += this.casillas[i][j].mod;
-            if (this.casillas[i][j] == Jugadores.Vacio)
+            if (this.casillas[i][j] === Jugadores.Vacio)
                 casillasLibres.push(j);
         }
             
@@ -188,7 +188,7 @@ class Tablero
         for (let i = this.dimension - 1, j = 0; j < this.dimension; --i, ++j)
         {
             sum += this.casillas[i][j].mod;
-            if (this.casillas[i][j] == Jugadores.Vacio)
+            if (this.casillas[i][j] === Jugadores.Vacio)
                 casillasLibres.push(j);
         }
 
@@ -244,9 +244,9 @@ class Juego
 
         this.turnoActual = this.turnoActual === Jugadores.X ? Jugadores.O : Jugadores.X;
         if (this.turnoActual === Jugadores.X)
-            document.querySelector("#turno").innerHTML = "Turno de X"
+            document.querySelector("#turno").innerHTML = "Turno de X";
         else
-            document.querySelector("#turno").innerHTML = "Turno de O"
+            document.querySelector("#turno").innerHTML = "Turno de O";
 
         this.tablero.pintarTabla();
         let ganador = this.tablero.checkFinPartida();
@@ -256,18 +256,18 @@ class Juego
             let spanResultado = document.querySelector("#resultado");
             spanResultado.style.display = "inline-block";
             if (ganador === Jugadores.X)
-                spanResultado.innerHTML = "¡Gana X!"
+                spanResultado.innerHTML = "¡Gana X!";
             else
-                spanResultado.innerHTML = "¡Gana O!"
+                spanResultado.innerHTML = "¡Gana O!";
         }
         else if (this.tablero.checkCompleto())
         {
             this.tableroBloqueado = true;
             let spanResultado = document.querySelector("#resultado");
             spanResultado.style.display = "inline-block";
-            spanResultado.innerHTML = "¡Empate! El tablero está lleno!"
+            spanResultado.innerHTML = "¡Empate! El tablero está lleno!";
         }
-        else if (this.usarIA && this.turnoActual == this.jugador2)
+        else if (this.usarIA && this.turnoActual === this.jugador2)
             this.turnoIA();
     }
 
@@ -283,7 +283,7 @@ class Juego
         document.querySelector("#jugador2").innerHTML = "Jugador 2: " + this.jugador2.texto;
         let turno = document.querySelector("#turno");
         turno.style.display = "inline-block";
-        turno.innerHTML = "Turno de X"
+        turno.innerHTML = "Turno de X";
         this.tableroBloqueado = false;
         this.tablero.pintarTabla();
 
