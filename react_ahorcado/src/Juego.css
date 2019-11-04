@@ -1,0 +1,31 @@
+.casilla
+{
+    border-bottom: 1px solid #666;
+    margin-right: 4px;
+    font-weight: bold;
+    font-size: 26px;
+    height: 40px;
+}
+
+li
+{
+    display: inline-block;
+    text-transform: uppercase;
+    width: 26px;
+    text-align: center;
+}
+
+ul
+{
+    list-style-type: none;
+}
+
+.espaciado
+{
+    height: 40px;
+}
+
+span
+{
+    font-size: 26px;
+}

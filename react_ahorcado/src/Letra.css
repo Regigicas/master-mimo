@@ -1,0 +1,15 @@
+.letra
+{
+    font-weight: bold;
+    font-size: 30px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+}
+
+.usada
+{
+    text-decoration: line-through;
+    opacity: 0.5;
+    cursor: default;
+}
