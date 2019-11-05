@@ -29,3 +29,21 @@ span
 {
     font-size: 26px;
 }
+
+.hidden
+{
+    display: none;
+}
+
+.boton1
+{
+    width: 200px;
+    height: 40px;
+}
+
+.cajausuario
+{
+    max-width: 300px;
+    text-align: center;
+    margin: auto;
+}
