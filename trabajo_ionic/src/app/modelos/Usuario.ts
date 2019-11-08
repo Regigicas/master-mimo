@@ -12,9 +12,10 @@ class Usuario
         this.passHash = passHash;
     }
 
-    getUsername() : string
+    static fromJSON(json: string): Usuario
     {
-        return this.username;
+        let parsed = JSON.parse(json);
+        return new Usuario(parsed.email, parsed.username, parsed.passHash);
     }
 }
 

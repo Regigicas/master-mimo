@@ -8,10 +8,15 @@ import { ErroresRegistro } from "../modelos/ErroresRegistro";
 })
 export class UsuariosService
 {
-    usuarios: Map<string, Usuario>;
+    usuarios: Map<string, Usuario> = null;
     constructor()
     {
-        this.usuarios = new Map<string, Usuario>();
+        let cached = localStorage.getItem("usuarios");
+        if (cached !== null)
+            this.usuarios = new Map(JSON.parse(cached));
+
+        if (this.usuarios === null)
+            this.usuarios = new Map<string, Usuario>();
     }
 
     registrarUsuario(form)
@@ -23,10 +28,22 @@ export class UsuariosService
             return ErroresRegistro.EmailDuplicado;
 
         for (let usr of this.usuarios.values())
-            if (usr.getUsername().toLowerCase() === usuario.getUsername().toLowerCase())
+            if (usr.username.toLowerCase() === usuario.username.toLowerCase())
                 return ErroresRegistro.UsuarioDuplicado;
 
         this.usuarios.set(usuario.email, usuario);
+        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Como no tenemos acceso a una base de datos de verdad, almacenamos en localstorage
         return ErroresRegistro.None;
+    }
+
+    tryLogin(form)
+    {
+        let usuario = this.usuarios.get(form.email);
+        if (!usuario)
+            return null;
+
+        let hash: any = crypto.SHA256(form.password);
+        hash = crypto.enc.Base64.stringify(hash);
+        return usuario.passHash === hash ? usuario : null;
     }
 }

@@ -1,0 +1,19 @@
+<ion-footer>
+    <ion-toolbar>
+        <ion-tabs>
+            <ion-tab-bar>
+                <ion-tab-button [attr.selected]="this.router.url === '/usuario' ? true : null" [routerLink]="['/usuario']">
+                    <ion-icon name="person" class="icons-size"></ion-icon>
+                </ion-tab-button>
+            
+                <ion-tab-button [attr.selected]="this.router.url !== '/usuario' && this.router.url !== '/favoritos' ? true : null" (click)="goHome()">
+                    <ion-icon name="home" class="icons-size"></ion-icon>
+                </ion-tab-button>
+            
+                <ion-tab-button [attr.selected]="this.router.url === '/favoritos' ? true : null" [routerLink]="['/favoritos']">
+                    <ion-icon name="star" class="icons-size"></ion-icon>
+                </ion-tab-button>
+            </ion-tab-bar>
+        </ion-tabs>
+    </ion-toolbar>
+</ion-footer>

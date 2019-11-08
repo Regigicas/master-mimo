@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title class="ion-text-center">¡Registrarse!</ion-title>
+    <ion-buttons slot="start">
+        <ion-back-button defaultHref="login" text="Atras"></ion-back-button>
+        <ion-title class="ion-text-center">¡Registrarse!</ion-title>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -23,7 +26,7 @@
                     <ion-input type="password" formControlName="password"></ion-input>
                 </ion-item>
 
-                <ion-item *ngIf="registerForm.get('password').hasError('minlength')" color="danger">
+                <ion-item *ngIf="registerForm.get('password').hasError('minlength')" color="danger" class="redondear">
                     <span>La contraseña tiene que contener al menos 8 caracteres</span>
                 </ion-item>
 
@@ -32,22 +35,22 @@
                     <ion-input type="password" formControlName="password2"></ion-input>
                 </ion-item>
 
-                <ion-item *ngIf="registerForm.get('password').valid && registerForm.get('password2').value && registerForm.errors?.notSame" color="danger">
+                <ion-item *ngIf="registerForm.get('password').valid && registerForm.get('password2').value && registerForm.errors?.notSame" color="danger" class="redondear">
                     <span>La contraseñas no coinciden</span>
                 </ion-item>
 
-                <ion-item *ngIf="errorRegistro" [ngSwitch]="errorRegistro" color="danger">
+                <ion-item *ngIf="errorRegistro" [ngSwitch]="errorRegistro" color="danger" class="redondear">
                     <span *ngSwitchCase="1">Ya existe una cuenta con el correo electrónico indicado</span>
                     <span *ngSwitchCase="2">Ya existe una cuenta con nombre de usuario indicado</span>
                 </ion-item>
 
-                <ion-item *ngIf="redirectTime" color="success">
+                <ion-item *ngIf="redirectTime" color="success" class="redondear">
                     <span>Registro completado con exito, se te rediccionará a "Inicio de sesión" en breve</span>
                 </ion-item>
 
                 <ion-item lines="none" class="ion-padding-top">
                     <ion-button expand="block" size="default" shape="round" color="primary" type="submit" [disabled]="!registerForm.valid || redirectTime"
-                        class="boton-login">Registrarse</ion-button>
+                        class="registrarse">Registrarse</ion-button>
                 </ion-item>
             </ion-card-content>
         </ion-card>

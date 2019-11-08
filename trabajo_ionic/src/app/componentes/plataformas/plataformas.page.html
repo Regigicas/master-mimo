@@ -1,0 +1,11 @@
+<app-header></app-header>
+    
+<ion-content>
+    <ion-list *ngIf="plataformas">
+        <ion-item *ngFor="let pl of plataformas">
+            <ion-button [routerLink]="['/plataformas', pl.id]">{{ pl.name }}</ion-button>
+        </ion-item>
+    </ion-list>
+</ion-content>
+
+<app-footer></app-footer>

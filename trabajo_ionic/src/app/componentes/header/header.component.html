@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar>
+        <ion-tabs>
+            <ion-tab-bar>
+                <ion-tab-button [attr.selected]="this.router.url === '/plataformas' ? true : null" [routerLink]="['/plataformas']">
+                    <ion-label>Plataformas</ion-label>
+                </ion-tab-button>
+            
+                <ion-tab-button [attr.selected]="this.router.url === '/home' ? true : null" [routerLink]="['/home']">
+                    <ion-label>Juegos</ion-label>
+                </ion-tab-button>
+            </ion-tab-bar>
+        </ion-tabs>
+  </ion-toolbar>
+</ion-header>
