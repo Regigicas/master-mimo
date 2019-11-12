@@ -18,13 +18,13 @@
                     <ion-input type="password" formControlName="password"></ion-input>
                 </ion-item>
 
+                <ion-item *ngIf="errorLogin" color="danger" class="redondear ion-margin-top">
+                    <span>No se ha podido iniciar sesión con los datos proporcionados</span>
+                </ion-item>
+
                 <ion-item lines="none" class="ion-padding-top">
                     <ion-button expand="block" size="default" shape="round" color="primary" type="submit" [disabled]="!loginForm.valid"
                         class="boton-login">Iniciar sesión</ion-button>
-                </ion-item>
-
-                <ion-item *ngIf="errorLogin" color="danger" class="redondear ion-margin-top">
-                    <span>No se ha podido iniciar sesión con los datos proporcionados</span>
                 </ion-item>
 
                 <ion-item lines="none">

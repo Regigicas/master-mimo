@@ -14,7 +14,7 @@ export class FooterComponent implements OnInit
 
     goHome()
     {
-        if (this.router.url !== "/usuarios" && this.router.url !== "/favoritos")
+        if (this.router.url !== "/usuario" && this.router.url !== "/favoritos")
             return;
 
         this.router.navigate(['/home'])

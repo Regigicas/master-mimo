@@ -1,0 +1,35 @@
+ion-card-content:hover {
+    background-color: #dadada4f;
+    cursor: pointer;
+}
+
+img
+{
+    max-width: 80px;
+    max-height: 80px;
+    object-fit: cover;
+    object-position: top;
+}
+
+.margin-label
+{
+    margin-left: 15px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.flexdiv
+{
+    display: flex;
+}
+
+.nopadding
+{
+    padding: 0;
+}
+
+.sc-ion-card-ios-h
+{
+    margin-top: 1px;
+    margin-bottom: 5px;
+}

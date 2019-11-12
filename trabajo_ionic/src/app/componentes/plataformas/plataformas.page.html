@@ -2,9 +2,7 @@
     
 <ion-content>
     <ion-list *ngIf="plataformas">
-        <ion-item *ngFor="let pl of plataformas">
-            <ion-button [routerLink]="['/plataformas', pl.id]">{{ pl.name }}</ion-button>
-        </ion-item>
+        <app-item-plataforma *ngFor="let pl of plataformas" [pl]="pl"></app-item-plataforma>
     </ion-list>
 </ion-content>
 

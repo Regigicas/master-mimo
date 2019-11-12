@@ -1,0 +1,12 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="ion-text-center">Información del usuario</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="usuario">
+    <ion-item><ion-label class="espaciado">Nombre de usuario:</ion-label>{{ usuario.username }}</ion-item>
+    <ion-item lines="none"><ion-label class="espaciado">Correo electrónico:</ion-label>{{ usuario.email }}</ion-item>
+</ion-content>
+
+<app-footer></app-footer>

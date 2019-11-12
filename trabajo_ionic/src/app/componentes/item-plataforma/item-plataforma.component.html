@@ -1,0 +1,8 @@
+<ion-item lines="none" class="listabase">
+    <ion-button [routerLink]="['/plataformas', pl.id]" class="lista">
+        <div class="toleft">
+            <div [ngClass]="getClassForItem(pl.name.toLowerCase())"></div>
+            <ion-label class="margin-label">{{ pl.name }}</ion-label>
+        </div>
+    </ion-button>
+</ion-item>

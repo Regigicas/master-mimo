@@ -11,7 +11,7 @@ export class PlataformasService
     private readonly apiURL: string = "https://api.rawg.io/api/platforms"
     plataformas: Observable<any[]>;
     plataformasCompletas: Map<string, Observable<any>> = new Map();
-    constructor(/*private http: HTTP, */private httpClient: HttpClient)
+    constructor(private httpClient: HttpClient)
     {
         this.plataformas = this.cargarDatos();
     }

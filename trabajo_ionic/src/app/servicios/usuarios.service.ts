@@ -23,7 +23,8 @@ export class UsuariosService
     {
         let hash: any = crypto.SHA256(form.password);
         hash = crypto.enc.Base64.stringify(hash);
-        let usuario = new Usuario(form.email, form.username, hash);
+        let email = form.email.toLowerCase();
+        let usuario = new Usuario(email, form.username, hash);
         if (this.usuarios.get(usuario.email))
             return ErroresRegistro.EmailDuplicado;
 
@@ -33,12 +34,13 @@ export class UsuariosService
 
         this.usuarios.set(usuario.email, usuario);
         localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Como no tenemos acceso a una base de datos de verdad, almacenamos en localstorage
+        sessionStorage.removeItem("usuarioActivo"); // Limpiamos la sesion activa
         return ErroresRegistro.None;
     }
 
     tryLogin(form)
     {
-        let usuario = this.usuarios.get(form.email);
+        let usuario = this.usuarios.get(form.email.toLowerCase());
         if (!usuario)
             return null;
 
