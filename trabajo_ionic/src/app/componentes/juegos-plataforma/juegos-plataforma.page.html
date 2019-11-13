@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+        <ion-back-button defaultHref="plataformas" text="Atras"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-list *ngIf="juegos" id="listaJuegos">
+        <ion-button (click)="openPicker()" class="button-padding">Ordenar por: {{ ordenString(tipoOrden) }}</ion-button>
+        <app-lista-juegos *ngFor="let j of juegosRender" [juego]="j"></app-lista-juegos>
+    </ion-list>
+
+    <ion-infinite-scroll threshold="50px" (ionInfinite)="loadData($event)">
+        <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Cargando mas juegos...">
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+</ion-content>

@@ -11,6 +11,8 @@ const routes: Routes = [
   { path: 'plataformas/:id', loadChildren: () => import('./componentes/plataforma/plataforma.module').then(m => m.PlataformaPageModule), canActivate: [EstaLogueadoService] },
   { path: 'usuario', loadChildren: () => import('./componentes/usuario/usuario.module').then(m => m.UsuarioPageModule), canActivate: [EstaLogueadoService] },
   { path: 'juego/:id', loadChildren: () => import('./componentes/juego-info/juego-info.module').then(m => m.JuegoInfoPageModule), canActivate: [EstaLogueadoService] },
+  { path: 'favoritos', loadChildren: () => import('./componentes/favoritos/favoritos.module').then(m => m.FavoritosPageModule), canActivate: [EstaLogueadoService] },
+  { path: 'juego/plataforma/:id', loadChildren: () => import('./componentes/juegos-plataforma/juegos-plataforma.module').then(m => m.JuegosPlataformaPageModule), canActivate: [EstaLogueadoService] },
   { path: '**', redirectTo: 'home' }
 ];
 

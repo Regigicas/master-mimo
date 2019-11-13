@@ -1,4 +1,4 @@
-ion-card-content:hover {
+ion-col:hover {
     background-color: #dadada4f;
     cursor: pointer;
 }
@@ -17,7 +17,6 @@ img
     margin-top: auto;
     margin-bottom: auto;
     color: #000000;
-    padding-right: 5px;
 }
 
 .flexdiv
@@ -34,4 +33,11 @@ img
 {
     margin-top: 1px;
     margin-bottom: 5px;
+}
+
+.trash-col
+{
+    padding-right: 15px;
+    color: red;
+    text-align: right;
 }

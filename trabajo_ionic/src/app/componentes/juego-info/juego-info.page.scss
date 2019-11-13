@@ -1,0 +1,38 @@
+img
+{
+    max-height: 500px;
+    margin: auto;
+    object-fit: cover;
+    object-position: top;
+}
+
+.plataformas
+{
+    padding-bottom: 10px;
+    color: #000000;
+}
+
+.black-text
+{
+    color: #000000;
+}
+
+.nopadding
+{
+    padding: 0;
+}
+
+.separacion
+{
+    padding-bottom: 10px;
+}
+
+ion-icon:hover {
+    color: #ffd000;
+    cursor: pointer;
+}
+
+.transparente
+{
+    background-color: transparent;
+}

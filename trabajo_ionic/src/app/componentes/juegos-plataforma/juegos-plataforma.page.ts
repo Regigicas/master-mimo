@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { TiposOrden, TiposOrdenUtil } from 'src/app/modelos/TiposOrden';
 import { JuegosService } from 'src/app/servicios/juegos.service';
 import { PickerController, Platform } from '@ionic/angular';
 import { PickerOptions } from '@ionic/core';
-import { TiposOrden, TiposOrdenUtil } from 'src/app/modelos/TiposOrden';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-menu-juegos',
-  templateUrl: './menu-juegos.component.html',
-  styleUrls: ['./menu-juegos.component.scss'],
+  selector: 'app-juegos-plataforma',
+  templateUrl: './juegos-plataforma.page.html',
+  styleUrls: ['./juegos-plataforma.page.scss'],
 })
-export class MenuJuegosComponent implements OnInit
+export class JuegosPlataformaPage implements OnInit
 {
     juegos = null;
     juegosRender = null;
@@ -17,12 +18,17 @@ export class MenuJuegosComponent implements OnInit
     ordenString = TiposOrdenUtil.ToString;
     actualCount: number = 10;
     maxSize: number = 0;
+    idPlataforma;
 
-    constructor(private juegosService: JuegosService, private pickerCtrl: PickerController, private platform: Platform) {}
+    constructor(private juegosService: JuegosService, private pickerCtrl: PickerController,
+        private platform: Platform, private route: ActivatedRoute)
+    {
+        this.idPlataforma = this.route.snapshot.paramMap.get("id");
+    }
 
     ngOnInit()
     {
-        this.juegosService.getJuegos().subscribe((data: any) =>
+        this.juegosService.getJuegosPlataforma(this.idPlataforma).subscribe((data: any) =>
         {
             this.juegos = data;
             this.juegosRender = this.juegos.slice().splice(0, 10);
@@ -96,6 +102,7 @@ export class MenuJuegosComponent implements OnInit
 
     loadData(event)
     {
+        console.log(this.actualCount + " " + this.maxSize);
         if (this.actualCount >= this.maxSize)
             return;
 

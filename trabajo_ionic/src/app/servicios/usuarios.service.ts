@@ -48,4 +48,69 @@ export class UsuariosService
         hash = crypto.enc.Base64.stringify(hash);
         return usuario.passHash === hash ? usuario : null;
     }
+
+    tieneFavorito(id)
+    {
+        let usuarioStore = sessionStorage.getItem("usuarioActivo");
+        if (usuarioStore === null)
+            return false;
+
+        let usuario = Usuario.fromJSON(usuarioStore);
+        if (!usuario.favoritos)
+            return false;
+
+        return usuario.favoritos.find((data) => data.id == id);
+    }
+
+    addFavorito(juego)
+    {
+        let usuarioStore = sessionStorage.getItem("usuarioActivo");
+        if (usuarioStore === null)
+            return;
+
+        let usuario = Usuario.fromJSON(usuarioStore);
+        if (!usuario.favoritos)
+            usuario.favoritos = new Array();
+
+        if (usuario.favoritos.find((data) => data.id == juego.id))
+            return;
+
+        usuario.favoritos.push(juego);
+        this.usuarios.set(usuario.email, usuario);
+        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
+        sessionStorage.setItem("usuarioActivo", JSON.stringify(usuario));
+    }
+
+    removeFavorito(juego)
+    {
+        let usuarioStore = sessionStorage.getItem("usuarioActivo");
+        if (usuarioStore === null)
+            return;
+
+        let usuario = Usuario.fromJSON(usuarioStore);
+        if (!usuario.favoritos)
+            return;
+
+        usuario.favoritos = usuario.favoritos.filter((data) => data.id != juego.id);
+            
+        this.usuarios.set(usuario.email, usuario);
+        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
+        sessionStorage.setItem("usuarioActivo", JSON.stringify(usuario));
+    }
+
+    eliminarFavoritos()
+    {
+        let usuarioStore = sessionStorage.getItem("usuarioActivo");
+        if (usuarioStore === null)
+            return;
+
+        let usuario = Usuario.fromJSON(usuarioStore);
+        if (!usuario.favoritos)
+            return;
+
+        usuario.favoritos = new Array();
+        this.usuarios.set(usuario.email, usuario);
+        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
+        sessionStorage.setItem("usuarioActivo", JSON.stringify(usuario));
+    }
 }

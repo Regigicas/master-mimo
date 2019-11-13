@@ -1,4 +1,4 @@
-<ion-list *ngIf="juegos">
+<ion-list *ngIf="juegos" id="listaJuegos">
     <ion-button (click)="openPicker()" class="button-padding">Ordenar por: {{ ordenString(tipoOrden) }}</ion-button>
     <app-lista-juegos *ngFor="let j of juegosRender" [juego]="j"></app-lista-juegos>
 </ion-list>

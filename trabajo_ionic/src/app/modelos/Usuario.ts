@@ -3,7 +3,7 @@ class Usuario
     email: string;
     username: string;
     passHash: string;
-    favoritos: Array<any>;
+    favoritos: Array<any> = null;
 
     constructor(email: string, username: string, passHash: string)
     {
@@ -15,7 +15,9 @@ class Usuario
     static fromJSON(json: string): Usuario
     {
         let parsed = JSON.parse(json);
-        return new Usuario(parsed.email, parsed.username, parsed.passHash);
+        let usuario = new Usuario(parsed.email, parsed.username, parsed.passHash);
+        usuario.favoritos = parsed.favoritos;
+        return usuario;
     }
 }
 

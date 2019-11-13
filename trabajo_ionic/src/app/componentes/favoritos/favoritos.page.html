@@ -1,0 +1,10 @@
+<app-header></app-header>
+
+<ion-content>
+    <ion-button (click)="borrarTodos()" color="danger" class="button-padding" disabled="{{!favoritos}}"><ion-label>Eliminar todos</ion-label></ion-button>
+    <ion-list *ngIf="favoritos">
+        <app-favorito *ngFor="let f of favoritos" [fav]="f" (emiter)="borrarFavorito($event)"></app-favorito>
+    </ion-list>
+</ion-content>
+
+<app-footer></app-footer>

@@ -8,14 +8,15 @@
 
 <ion-content>
     <ion-card *ngIf="plataforma">
-        <img src="{{plataforma.image_background}}"/>
+        <img src="{{plataforma.image_background}}" alt="Imagen de la plataforma"/>
         <ion-card-header>
             <ion-card-subtitle>Plataforma</ion-card-subtitle>
             <ion-card-title>{{plataforma.name}}</ion-card-title>
         </ion-card-header>
         <ion-card-content [innerHTML]="plataforma.description">
         </ion-card-content>
+        <ion-card-content class="no-padding-top">
+            <ion-button [routerLink]="['/juego/plataforma', plataforma.id]"><ion-label>Ver juegos de la plataforma</ion-label></ion-button>
+        </ion-card-content>
     </ion-card>
 </ion-content>
-
-<app-footer></app-footer>

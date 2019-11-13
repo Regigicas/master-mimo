@@ -5,8 +5,9 @@
 </ion-header>
 
 <ion-content *ngIf="usuario">
-    <ion-item><ion-label class="espaciado">Nombre de usuario:</ion-label>{{ usuario.username }}</ion-item>
-    <ion-item lines="none"><ion-label class="espaciado">Correo electrónico:</ion-label>{{ usuario.email }}</ion-item>
+    <ion-item><ion-label>Nombre de usuario: {{ usuario.username }}</ion-label></ion-item>
+    <ion-item lines="none"><ion-label >Correo electrónico: {{ usuario.email }}</ion-label></ion-item>
+    <ion-button class="paddingfix"><ion-label>Actualizar datos</ion-label></ion-button>
 </ion-content>
 
 <app-footer></app-footer>
