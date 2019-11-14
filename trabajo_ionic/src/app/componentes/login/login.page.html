@@ -15,7 +15,7 @@
 
                 <ion-item>
                     <ion-label position="floating">Contraseña</ion-label>
-                    <ion-input type="password" formControlName="password"></ion-input>
+                    <ion-input type="password" formControlName="password" (keyup.enter)="hacerLogin(loginForm.value)"></ion-input>
                 </ion-item>
 
                 <ion-item *ngIf="errorLogin" color="danger" class="redondear ion-margin-top">
@@ -28,7 +28,7 @@
                 </ion-item>
 
                 <ion-item lines="none">
-                    <ion-button expand="block" size="default" shape="round" color="light" type="button" (click)="irRegistro()"
+                    <ion-button expand="block" size="default" shape="round" color="light" type="button" [routerLink]="['/register']"
                         class="boton-registro"><ion-label>Registrarse</ion-label></ion-button>
                 </ion-item>
             </ion-card-content>

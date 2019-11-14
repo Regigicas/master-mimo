@@ -1,4 +1,11 @@
-.paddingfix
-{
-    padding-left: 10px;
+ion-button {
+    width: 250px;
+    margin: auto;
+    @media (max-width: 600px) {
+            display: flex;
+        }
+}
+
+ion-label {
+    word-break: break-all;
 }

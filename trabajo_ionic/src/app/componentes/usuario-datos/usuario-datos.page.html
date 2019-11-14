@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+        <ion-back-button defaultHref="usuario" text="Atras"></ion-back-button>
+        <ion-title class="ion-text-center">Cambiar contraseña</ion-title>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <form [formGroup]="datosChangeForm" (ngSubmit)="onFormSubmit(datosChangeForm.value)">
+        <ion-card>
+            <ion-card-content>
+                <ion-item>
+                    <ion-label position="floating">Correo electrónico</ion-label>
+                    <ion-input type="email" formControlName="email" value="{{usuario?.email}}"></ion-input>
+                </ion-item>
+
+                <ion-item>
+                    <ion-label position="floating">Usuario</ion-label>
+                    <ion-input type="text" formControlName="username" value="{{usuario?.username}}"></ion-input>
+                </ion-item>
+
+                <ion-item *ngIf="updateValue" [ngSwitch]="updateValue" color="success" class="redondear">
+                    <span *ngSwitchCase="1">Datos actualizados con exito, se te redireccionará en breve</span>
+                    <span *ngSwitchCase="2">Datos actualizados con exito, como has cambiado el correo electrónico se cerrará la sesión en breve</span>
+                </ion-item>
+
+                <ion-item lines="none" class="ion-padding-top">
+                    <ion-button expand="block" size="default" shape="round" color="primary" type="submit" [disabled]="!datosChangeForm.valid || updateValue > 0"
+                        class="boton-update">Actualizar datos</ion-button>
+                </ion-item>
+            </ion-card-content>
+        </ion-card>
+    </form>
+</ion-content>

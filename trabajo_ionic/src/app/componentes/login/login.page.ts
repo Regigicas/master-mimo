@@ -34,6 +34,7 @@ export class LoginPage implements OnInit
             this.errorLogin = true;
         else
         {
+            this.errorLogin = false;
             sessionStorage.setItem("usuarioActivo", JSON.stringify(loginResult));
             this.router.navigate(['home']);
         }

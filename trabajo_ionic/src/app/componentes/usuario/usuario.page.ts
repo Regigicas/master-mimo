@@ -10,8 +10,10 @@ export class UsuarioPage implements OnInit
 {
     usuario: Usuario = null;
     constructor() { }
+    
+    ngOnInit() {}
 
-    ngOnInit()
+    ionViewWillEnter()
     {
         this.usuario = Usuario.fromJSON(sessionStorage.getItem("usuarioActivo"));
     }

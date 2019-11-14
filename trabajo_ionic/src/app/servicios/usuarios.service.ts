@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import * as crypto from 'crypto-js';
 import { Usuario } from "../modelos/Usuario";
 import { ErroresRegistro } from "../modelos/ErroresRegistro";
+import { ErroresUpdatePassword } from '../modelos/ErroresUpdatePassword';
+import { EnumUpdateDatos } from '../modelos/EnumUpdateDatos';
 
 @Injectable({
   providedIn: 'root'
@@ -112,5 +114,66 @@ export class UsuariosService
         this.usuarios.set(usuario.email, usuario);
         localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
         sessionStorage.setItem("usuarioActivo", JSON.stringify(usuario));
+    }
+
+    actualizarPassword(form)
+    {
+        let usuarioStore = sessionStorage.getItem("usuarioActivo");
+        if (usuarioStore === null)
+            return ErroresUpdatePassword.PasswordAntiguaFail;
+
+        let usuario = Usuario.fromJSON(usuarioStore);
+        let oldHash: any = crypto.SHA256(form.passwordActual);
+        oldHash = crypto.enc.Base64.stringify(oldHash);
+        if (oldHash != usuario.passHash)
+            return ErroresUpdatePassword.PasswordAntiguaFail;
+
+        let hash: any = crypto.SHA256(form.password);
+        hash = crypto.enc.Base64.stringify(hash);
+
+        if (oldHash == hash)
+            return ErroresUpdatePassword.MismaPassword;
+
+        usuario.passHash = hash;
+        this.usuarios.set(usuario.email, usuario);
+        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
+        sessionStorage.removeItem("usuarioActivo");
+        return ErroresUpdatePassword.None;
+    }
+
+    actualizarDatos(form)
+    {
+        let usuarioStore = sessionStorage.getItem("usuarioActivo");
+        if (usuarioStore === null)
+            return EnumUpdateDatos.ActualizadoNormal;
+
+        let nuevoEmail = form.email;
+        if (!nuevoEmail || nuevoEmail == "")
+            nuevoEmail = null;
+
+        let nuevoUsername = form.username;
+        if (!nuevoUsername || nuevoUsername == "")
+            nuevoUsername = null;
+
+        let usuario = Usuario.fromJSON(usuarioStore);
+        let oldMail = usuario.email;
+        if (nuevoEmail && nuevoEmail == oldMail)
+            nuevoEmail = null;
+
+        if (nuevoEmail)
+        {
+            this.usuarios.delete(oldMail);
+            usuario.email = nuevoEmail;
+            sessionStorage.removeItem("usuarioActivo");
+        }
+
+        if (nuevoUsername)
+            usuario.username = nuevoUsername;
+
+        this.usuarios.set(usuario.email, usuario);
+        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
+        if (!nuevoEmail)
+            sessionStorage.setItem("usuarioActivo", JSON.stringify(usuario));
+        return nuevoEmail ? EnumUpdateDatos.ActualizadoLogout : EnumUpdateDatos.ActualizadoNormal;
     }
 }
