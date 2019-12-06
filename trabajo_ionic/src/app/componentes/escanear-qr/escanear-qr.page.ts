@@ -12,6 +12,7 @@ export class EscanearQrPage implements OnInit
     errorCamera: boolean = false;
     errorJSON: boolean = false;
     scanSub = null;
+    enProgreso: boolean = false;
 
     constructor(private qrScanner: QRScanner, private router: Router) {}
 
@@ -26,12 +27,17 @@ export class EscanearQrPage implements OnInit
 
     clickScan()
     {
+        if (this.enProgreso)
+            return;
+
         this.qrScanner.prepare().then((status: QRScannerStatus) =>
         {
-           if (status.authorized)
-           {
+            this.enProgreso = true;
+            if (status.authorized)
+            {
                 this.scanSub = this.qrScanner.scan().subscribe((text: any) =>
                 {
+                    this.enProgreso = false;
                     this.qrScanner.hide();
                     this.scanSub.unsubscribe();
                     this.scanSub = null;
@@ -52,14 +58,17 @@ export class EscanearQrPage implements OnInit
 
                     this.router.navigate(["/juego", idJuego]);
                 });
-           }
-           else
-            this.errorCamera = true;
-        })
-        .catch((e: any) =>
+            }
+            else
+            {
+                this.enProgreso = false;
+                this.errorCamera = true;
+            }
+        }).catch((e: any) =>
         {
             console.log("Error API QR: ", e);
             this.errorCamera = true;
+            this.enProgreso = false;
         });
     }
 }
