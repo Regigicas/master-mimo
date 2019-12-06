@@ -8,14 +8,14 @@
 
 <ion-content>
     <ion-card *ngIf="juego">
-        <img src="{{juego.background_image}}" alt="Imagen del juego"/>
+        <img src="{{backgroundURL}}" alt="Imagen del juego"/>
         <ion-card-header>
             <ion-card-title><b>{{juego.name}}</b></ion-card-title>
             <ion-grid class="nopadding">
                 <ion-row>
                     <ion-col size="10" class="nopadding">
-                        <ion-label class="black-text">Fecha de salida: {{ juego.released }}</ion-label><br>
-                        <ion-label class="black-text">Valoración: {{ juego.rating }}</ion-label>
+                            <ion-label class="black-text">Valoración: {{ juego.rating }} / 5</ion-label><br>
+                        <ion-label class="black-text">Fecha de salida: {{ juego.released }}</ion-label>
                     </ion-col>
                     <ion-col class="nopadding">
                         <ion-icon ios="md-star-outline" md="md-star-outline" size="large" *ngIf="!esFavorito" (click)="addFavorito()"></ion-icon>
@@ -32,9 +32,13 @@
                 </div>
             </div>
             <ion-label class="black-text"><b>Descripción del juego:</b></ion-label>
-            <ion-label [innerHTML]="juego.description"></ion-label>
+            <ion-label [innerHTML]="juego.description"></ion-label><br>
 
-
+            <ion-button (click)="generarQR()"><ion-label>Generar QR de acceso rápido</ion-label></ion-button>
+            <ngx-qrcode *ngIf="mostrarQR" #qrDiv
+                [qrc-value] = "datosQR"
+                qrc-class = "qr-mod"
+                qrc-errorCorrectionLevel = "L" ></ngx-qrcode>
         </ion-card-content>
     </ion-card>
 </ion-content>

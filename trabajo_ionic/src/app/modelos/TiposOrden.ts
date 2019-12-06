@@ -29,19 +29,19 @@ class TiposOrdenUtil
 
     static PorNombre(a, b)
     {
-        return a.name > b.name;
+        return a.name > b.name ? 1 : -1;
     }
 
     static PorFechaSalida(a, b)
     {
         let datea = new Date(a.released);
         let dateb = new Date(b.released);
-        return datea > dateb;
+        return datea > dateb ? 1 : -1;
     }
 
     static PorValoracion(a, b)
     {
-        return a.rating > b.rating;
+        return a.rating > b.rating ? 1 : -1;
     }
 }
 

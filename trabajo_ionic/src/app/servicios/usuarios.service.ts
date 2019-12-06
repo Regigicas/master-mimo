@@ -4,6 +4,7 @@ import { Usuario } from "../modelos/Usuario";
 import { ErroresRegistro } from "../modelos/ErroresRegistro";
 import { ErroresUpdatePassword } from '../modelos/ErroresUpdatePassword';
 import { EnumUpdateDatos } from '../modelos/EnumUpdateDatos';
+import { Storage } from '@ionic/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,14 @@ import { EnumUpdateDatos } from '../modelos/EnumUpdateDatos';
 export class UsuariosService
 {
     usuarios: Map<string, Usuario> = null;
-    constructor()
+    constructor(private storage: Storage)
     {
-        let cached = localStorage.getItem("usuarios");
+        this.loadInitialData();
+    }
+
+    async loadInitialData()
+    {
+        let cached = await this.storage.get("usuarios");
         if (cached !== null)
             this.usuarios = new Map(JSON.parse(cached));
 
@@ -35,8 +41,8 @@ export class UsuariosService
                 return ErroresRegistro.UsuarioDuplicado;
 
         this.usuarios.set(usuario.email, usuario);
-        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Como no tenemos acceso a una base de datos de verdad, almacenamos en localstorage
-        sessionStorage.removeItem("usuarioActivo"); // Limpiamos la sesion activa
+        this.storage.set("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Como no tenemos acceso a una base de datos de verdad, almacenamos mediante la libreria de ionic
+        this.setUsuarioActivo(null); // Limpiamos la sesion activa
         return ErroresRegistro.None;
     }
 
@@ -53,12 +59,8 @@ export class UsuariosService
 
     tieneFavorito(id)
     {
-        let usuarioStore = sessionStorage.getItem("usuarioActivo");
-        if (usuarioStore === null)
-            return false;
-
-        let usuario = Usuario.fromJSON(usuarioStore);
-        if (!usuario.favoritos)
+        let usuario = this.getUsuarioActivo();
+        if (!usuario || !usuario.favoritos)
             return false;
 
         return usuario.favoritos.find((data) => data.id == id);
@@ -66,11 +68,10 @@ export class UsuariosService
 
     addFavorito(juego)
     {
-        let usuarioStore = sessionStorage.getItem("usuarioActivo");
-        if (usuarioStore === null)
+        let usuario = this.getUsuarioActivo();
+        if (!usuario)
             return;
 
-        let usuario = Usuario.fromJSON(usuarioStore);
         if (!usuario.favoritos)
             usuario.favoritos = new Array();
 
@@ -79,50 +80,41 @@ export class UsuariosService
 
         usuario.favoritos.push(juego);
         this.usuarios.set(usuario.email, usuario);
-        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
-        sessionStorage.setItem("usuarioActivo", JSON.stringify(usuario));
+        this.storage.set("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
+        this.setUsuarioActivo(usuario);
     }
 
     removeFavorito(juego)
     {
-        let usuarioStore = sessionStorage.getItem("usuarioActivo");
-        if (usuarioStore === null)
-            return;
-
-        let usuario = Usuario.fromJSON(usuarioStore);
-        if (!usuario.favoritos)
+        let usuario = this.getUsuarioActivo();
+        if (!usuario || !usuario.favoritos)
             return;
 
         usuario.favoritos = usuario.favoritos.filter((data) => data.id != juego.id);
             
         this.usuarios.set(usuario.email, usuario);
-        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
-        sessionStorage.setItem("usuarioActivo", JSON.stringify(usuario));
+        this.storage.set("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
+        this.setUsuarioActivo(usuario);
     }
 
     eliminarFavoritos()
     {
-        let usuarioStore = sessionStorage.getItem("usuarioActivo");
-        if (usuarioStore === null)
-            return;
-
-        let usuario = Usuario.fromJSON(usuarioStore);
-        if (!usuario.favoritos)
+        let usuario = this.getUsuarioActivo();
+        if (!usuario || !usuario.favoritos)
             return;
 
         usuario.favoritos = new Array();
         this.usuarios.set(usuario.email, usuario);
-        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
-        sessionStorage.setItem("usuarioActivo", JSON.stringify(usuario));
+        this.storage.set("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
+        this.setUsuarioActivo(usuario);
     }
 
     actualizarPassword(form)
     {
-        let usuarioStore = sessionStorage.getItem("usuarioActivo");
-        if (usuarioStore === null)
+        let usuario = this.getUsuarioActivo();
+        if (usuario === null)
             return ErroresUpdatePassword.PasswordAntiguaFail;
 
-        let usuario = Usuario.fromJSON(usuarioStore);
         let oldHash: any = crypto.SHA256(form.passwordActual);
         oldHash = crypto.enc.Base64.stringify(oldHash);
         if (oldHash != usuario.passHash)
@@ -136,15 +128,15 @@ export class UsuariosService
 
         usuario.passHash = hash;
         this.usuarios.set(usuario.email, usuario);
-        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
-        sessionStorage.removeItem("usuarioActivo");
+        this.storage.set("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
+        this.setUsuarioActivo(null);
         return ErroresUpdatePassword.None;
     }
 
     actualizarDatos(form)
     {
-        let usuarioStore = sessionStorage.getItem("usuarioActivo");
-        if (usuarioStore === null)
+        let usuario = this.getUsuarioActivo();
+        if (usuario === null)
             return EnumUpdateDatos.ActualizadoNormal;
 
         let nuevoEmail = form.email;
@@ -155,7 +147,6 @@ export class UsuariosService
         if (!nuevoUsername || nuevoUsername == "")
             nuevoUsername = null;
 
-        let usuario = Usuario.fromJSON(usuarioStore);
         let oldMail = usuario.email;
         if (nuevoEmail && nuevoEmail == oldMail)
             nuevoEmail = null;
@@ -164,16 +155,30 @@ export class UsuariosService
         {
             this.usuarios.delete(oldMail);
             usuario.email = nuevoEmail;
-            sessionStorage.removeItem("usuarioActivo");
+            this.setUsuarioActivo(null);
         }
 
         if (nuevoUsername)
             usuario.username = nuevoUsername;
 
         this.usuarios.set(usuario.email, usuario);
-        localStorage.setItem("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
+        this.storage.set("usuarios", JSON.stringify(Array.from(this.usuarios.entries()))); // Actualizamos la pseudo-db
         if (!nuevoEmail)
-            sessionStorage.setItem("usuarioActivo", JSON.stringify(usuario));
+            this.setUsuarioActivo(usuario);
         return nuevoEmail ? EnumUpdateDatos.ActualizadoLogout : EnumUpdateDatos.ActualizadoNormal;
+    }
+
+    getUsuarioActivo()
+    {
+        let result = sessionStorage.getItem("usuarioActivo");
+        return result != null ? Usuario.fromJSON(result) : null;
+    }
+
+    setUsuarioActivo(usuario: Usuario)
+    {
+        if (usuario)
+            sessionStorage.setItem("usuarioActivo", JSON.stringify(usuario));
+        else
+            sessionStorage.removeItem("usuarioActivo");
     }
 }

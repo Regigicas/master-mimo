@@ -1,4 +1,4 @@
-<ion-list *ngIf="juegos" id="listaJuegos">
+<ion-list *ngIf="juegos" id="listaJuegos" #listaJuegos>
     <ion-button (click)="openPicker()" class="button-padding">Ordenar por: {{ ordenString(tipoOrden) }}</ion-button>
     <app-lista-juegos *ngFor="let j of juegosRender" [juego]="j"></app-lista-juegos>
 </ion-list>
@@ -6,6 +6,6 @@
 <ion-infinite-scroll threshold="50px" (ionInfinite)="loadData($event)">
     <ion-infinite-scroll-content
         loadingSpinner="bubbles"
-        loadingText="Cargando mas juegos...">
+        loadingText="Cargando más juegos...">
     </ion-infinite-scroll-content>
 </ion-infinite-scroll>

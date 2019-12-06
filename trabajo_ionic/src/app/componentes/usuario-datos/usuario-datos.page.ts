@@ -27,7 +27,7 @@ export class UsuarioDatosPage implements OnInit
 
     ionViewWillEnter()
     {
-        this.usuario = Usuario.fromJSON(sessionStorage.getItem("usuarioActivo"));
+        this.usuario = this.usuariosService.getUsuarioActivo();
     }
 
     onFormSubmit(form)

@@ -1,4 +1,4 @@
-ion-col:hover {
+ion-card-content:hover {
     background-color: #dadada4f;
     cursor: pointer;
 }
@@ -13,10 +13,9 @@ img
 
 .margin-label
 {
-    margin-left: 15px;
-    margin-top: auto;
-    margin-bottom: auto;
     color: #000000;
+    margin: auto;
+    text-align: center;
 }
 
 .flexdiv
@@ -40,4 +39,18 @@ img
     padding-right: 15px;
     color: red;
     text-align: right;
+    border-left: 1px #D3D3D3 solid;
+}
+
+@media only screen and (min-width: 400px)
+{
+    .trash-col
+    {
+        display: flex;
+    }
+
+    .icon-cen
+    {
+        margin: auto;
+    }
 }

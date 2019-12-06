@@ -9,6 +9,14 @@
                 <ion-tab-button [attr.selected]="this.router.url === '/home' ? true : null" [routerLink]="['/home']">
                     <ion-label>Juegos</ion-label>
                 </ion-tab-button>
+
+                <ion-tab-button [attr.selected]="this.router.url === '/buscar' ? true : null" [routerLink]="['/buscar']">
+                    <ion-label>Buscar Juego</ion-label>
+                </ion-tab-button>
+
+                <ion-tab-button [attr.selected]="this.router.url === '/escanear-qr' ? true : null" [routerLink]="['/escanear-qr']">
+                    <ion-label>Escanear QR</ion-label>
+                </ion-tab-button>
             </ion-tab-bar>
         </ion-tabs>
   </ion-toolbar>

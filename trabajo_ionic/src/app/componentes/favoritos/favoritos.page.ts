@@ -17,11 +17,10 @@ export class FavoritosPage implements OnInit
 
     ionViewWillEnter()
     {
-        let usuarioStore = sessionStorage.getItem("usuarioActivo");
-        if (usuarioStore === null)
+        let usuario = this.usuariosService.getUsuarioActivo();
+        if (usuario === null)
             return;
 
-        let usuario = Usuario.fromJSON(usuarioStore);
         this.favoritos = usuario.favoritos;
     }
 

@@ -15,6 +15,8 @@ const routes: Routes = [
   { path: 'juego/plataforma/:id', loadChildren: () => import('./componentes/juegos-plataforma/juegos-plataforma.module').then(m => m.JuegosPlataformaPageModule), canActivate: [EstaLogueadoService] },
   { path: 'usuario/password', loadChildren: () => import('./componentes/usuario-password/usuario-password.module').then(m => m.UsuarioPasswordPageModule) },
   { path: 'usuario/datos', loadChildren: () => import('./componentes/usuario-datos/usuario-datos.module').then(m => m.UsuarioDatosPageModule) },
+  { path: 'buscar', loadChildren: () => import('./componentes/buscar/buscar.module').then(m => m.BuscarPageModule) },
+  { path: 'escanear-qr', loadChildren: () => import('./componentes/escanear-qr/escanear-qr.module').then(m => m.EscanearQrPageModule) },
   { path: '**', redirectTo: 'home' }
 ];
 

@@ -1,8 +1,16 @@
 <ion-card>
     <ion-card-content class="nopadding" (click)="goGame()">
-        <div class="flexdiv">
-            <img src="{{ juego.css_background }}" alt="Imagen del juego"/>
-            <ion-label class="margin-label">{{ juego.name }}</ion-label>
-        </div>
+        <ion-grid class="nopadding">
+            <ion-row class="ion-align-items-center">
+                <ion-col size="3" class="nopadding"><img src="{{ juego.css_background }}" alt="Imagen del juego"/></ion-col>
+                <ion-col size="6" class="nopadding flexdiv"><ion-label class="black-text">{{ juego.name }}</ion-label></ion-col>
+                <ion-col size="3" class="nopadding left-border">
+                    <ion-row>
+                        <ion-col size="12" class="data-label"><ion-label class="black-text">{{ juego.rating }} / 5</ion-label></ion-col>
+                        <ion-col class="data-label"><ion-label class="black-text">{{ juego.released }}</ion-label></ion-col>
+                    </ion-row>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
     </ion-card-content>
 </ion-card>

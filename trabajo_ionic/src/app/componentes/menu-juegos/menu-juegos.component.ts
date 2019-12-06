@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { JuegosService } from 'src/app/servicios/juegos.service';
 import { PickerController, Platform } from '@ionic/angular';
 import { PickerOptions } from '@ionic/core';
@@ -17,8 +17,10 @@ export class MenuJuegosComponent implements OnInit
     ordenString = TiposOrdenUtil.ToString;
     actualCount: number = 10;
     maxSize: number = 0;
+    @ViewChild('listaJuegos', { static: false }) listaJuegos;
 
-    constructor(private juegosService: JuegosService, private pickerCtrl: PickerController, private platform: Platform) {}
+    constructor(private juegosService: JuegosService, private pickerCtrl: PickerController,
+        private platform: Platform, private changeDetectorRef: ChangeDetectorRef) {}
 
     ngOnInit()
     {
@@ -27,20 +29,16 @@ export class MenuJuegosComponent implements OnInit
             this.juegos = data;
             this.juegosRender = this.juegos.slice().splice(0, 10);
             this.maxSize = this.juegos.length;
-        });
-    }
-
-    ngAfterViewInit()
-    {
-        setTimeout(() =>
-        {
-            let lista = document.getElementById("listaJuegos");
-            if (lista && this.platform.height() > lista.scrollHeight)
+            setTimeout(() =>
             {
-                this.juegosRender.push.apply(this.juegosRender, this.juegos.slice().splice(this.actualCount, 10))
-                this.actualCount += 10;
-            }
-        }, 500);
+                this.changeDetectorRef.detectChanges();
+                if (this.listaJuegos && this.platform.height() > this.listaJuegos.el.scrollHeight)
+                {
+                    this.juegosRender.push.apply(this.juegosRender, this.juegos.slice().splice(this.actualCount, 10))
+                    this.actualCount += 10;
+                }
+            }, 500); // Hacemos que primero se renderice lo que llevamos de lista para evitar dejarla en blanco durante un segundo
+        });
     }
 
     readonly opts: PickerOptions = 

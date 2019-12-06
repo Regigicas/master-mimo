@@ -1,0 +1,24 @@
+<app-header></app-header>
+    
+<ion-content>
+    <form (ngSubmit)="realizarBusqueda()">
+        <ion-grid>
+            <ion-row>
+                <ion-col size="10">
+                    <ion-item>
+                        <ion-input type="text" [(ngModel)]="textoBusqueda" name="Nombre" placeholder="Nombre del juego"></ion-input>
+                    </ion-item>
+                </ion-col>
+                <ion-col class="colSearch">
+                    <button ion-button type="submit" block><ion-icon name="search" class="icons-size" color="dark"></ion-icon></button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </form>
+
+    <ion-list *ngIf="juegos">
+        <app-lista-juegos *ngFor="let j of juegos" [juego]="j"></app-lista-juegos>
+    </ion-list>
+</ion-content>
+
+<app-footer></app-footer>

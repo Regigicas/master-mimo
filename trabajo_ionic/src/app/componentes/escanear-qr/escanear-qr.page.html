@@ -1,0 +1,19 @@
+<app-header></app-header>
+    
+<ion-content>
+    <ion-item lines="none" class="ion-padding-top flex">
+        <ion-button expand="block" size="large" shape="round" color="primary" class="margin-change" (click)="clickScan()">
+            <ion-label class="ion-text-wrap ion-padding"><br>Escanear Código QR de acceso rápido<br><br></ion-label>
+        </ion-button>
+    </ion-item>
+    
+    <ion-item *ngIf="errorCamera" color="danger" class="redondear ion-margin-top">
+        <span>No se ha podido iniciar la cámara o no has proporcionado permisos a la aplicación</span>
+    </ion-item>
+
+    <ion-item *ngIf="errorJSON" color="danger" class="redondear ion-margin-top">
+        <span>El QR utilizado no es válido</span>
+    </ion-item>
+</ion-content>
+
+<app-footer></app-footer>

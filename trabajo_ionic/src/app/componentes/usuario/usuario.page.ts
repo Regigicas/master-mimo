@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Usuario } from 'src/app/modelos/Usuario';
+import { UsuariosService } from 'src/app/servicios/usuarios.service';
 
 @Component({
   selector: 'app-usuario',
@@ -9,12 +10,12 @@ import { Usuario } from 'src/app/modelos/Usuario';
 export class UsuarioPage implements OnInit
 {
     usuario: Usuario = null;
-    constructor() { }
+    constructor(private usuarioService: UsuariosService) { }
     
     ngOnInit() {}
 
     ionViewWillEnter()
     {
-        this.usuario = Usuario.fromJSON(sessionStorage.getItem("usuarioActivo"));
+        this.usuario = this.usuarioService.getUsuarioActivo();
     }
 }

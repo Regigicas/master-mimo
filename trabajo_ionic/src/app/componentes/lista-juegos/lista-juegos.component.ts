@@ -14,6 +14,12 @@ export class ListaJuegosComponent implements OnInit
 
     ngOnInit()
     {
+        if (!this.juego.background_image)
+        {
+            this.juego.css_background = "https://via.placeholder.com/500x500";
+            return;
+        }
+
         let splits = this.juego.background_image.split("/");
         let url1 = splits[splits.length - 1];
         let url2 = splits[splits.length - 2];

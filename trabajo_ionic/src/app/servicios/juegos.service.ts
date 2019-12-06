@@ -53,4 +53,9 @@ export class JuegosService
         this.juegosPlataforma.set(id, result);
         return result;
     }
+
+    getJuegosBusqueda(query)
+    {
+        return this.httpClient.get(this.apiURL + "?page_size=40&search='" + query + "'").pipe(map((data: any) => data.results));;
+    }
 }
