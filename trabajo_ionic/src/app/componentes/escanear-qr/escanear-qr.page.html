@@ -1,6 +1,6 @@
 <app-header></app-header>
     
-<ion-content>
+<ion-content [style.background]="getBackgroundColor()">
     <ion-item *ngIf="!enProgreso" lines="none" class="ion-padding-top flex">
         <ion-button expand="block" size="large" shape="round" color="primary" class="margin-change" (click)="clickScan()">
             <ion-label class="ion-text-wrap ion-padding"><br>Escanear Código QR de acceso rápido<br><br></ion-label>

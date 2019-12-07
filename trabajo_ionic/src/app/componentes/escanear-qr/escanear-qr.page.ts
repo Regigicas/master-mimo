@@ -71,4 +71,9 @@ export class EscanearQrPage implements OnInit
             this.enProgreso = false;
         });
     }
+
+    getBackgroundColor()
+    {
+        return this.enProgreso ? "none transparent" : "white";
+    }
 }
