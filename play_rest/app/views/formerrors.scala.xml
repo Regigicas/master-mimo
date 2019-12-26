@@ -1,0 +1,11 @@
+@import com.fasterxml.jackson.databind.JsonNode
+@(errores: JsonNode)
+<?xml version="1.0" encoding="UTF-8" ?>
+<formErrors>
+    @for(field <- errores.fields()) {
+        <paramError>
+            <name>@field.getKey()</name>
+            <desc>@field.getValue()</desc>
+        </paramError>
+    }
+</formErrors>

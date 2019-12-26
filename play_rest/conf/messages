@@ -1,0 +1,6 @@
+error.existingUser=That username is already taken
+error.no.whitespace.allowed=Cannot contain whitespaces
+error.oldpasswordMismatch=Old password don''t match
+error.samepassword=New password must be different from old password
+error.existingIngredient=There is already an ingredient with that name
+error.ingredient.samename=The new name must be different from the old one

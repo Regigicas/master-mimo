@@ -1,0 +1,11 @@
+@(ingrediente: Ingrediente)
+<id>@ingrediente.id</id>
+<name>@ingrediente.nombre</name>
+<assignedIn>
+    @for(rec <- ingrediente.recetas) {
+        <receta>
+            <id>@rec.id</id>
+            <name>@rec.nombre</name>
+        </receta>
+    }
+    </assignedIn>

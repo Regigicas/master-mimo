@@ -1,0 +1,7 @@
+@import misc.RestError
+@(error: RestError)
+<?xml version="1.0" encoding="UTF-8" ?>
+<restError>
+    <code>@error.httpError</code>
+    <message>@error.message</message>
+</restError>
