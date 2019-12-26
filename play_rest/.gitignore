@@ -16,3 +16,4 @@ server.pid
 .cache
 .idea
 .DS_Store
+!sbt-dist/bin/
