@@ -1,37 +1,49 @@
 package controllers;
 
+import actions.ValidateAccessAction;
+import misc.ObtenerUsuario;
 import models.Receta;
 import play.cache.SyncCacheApi;
 import play.data.FormFactory;
+import play.i18n.MessagesApi;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Security;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 
+@ObtenerUsuario
+@Security.Authenticated(ValidateAccessAction.class)
 public class RecetaController extends Controller
 {
     @Inject
-    FormFactory formFactory;
+    private FormFactory formFactory;
+
+    @Inject
+    private MessagesApi messageApi;
 
     @Inject
     private SyncCacheApi cache;
 
-    public Result getRecetas()
+    public Result getRecetas(Http.Request request)
     {
-        List<Receta> recetas = cache.get(Receta.CACHE_GET_PATH);
+        Optional<List<Receta>> optRecetas = cache.getOptional(Receta.CACHE_GET_PATH);
+        List<Receta> recetas = optRecetas.isPresent() ? optRecetas.get() : null;
         if (recetas == null)
         {
             recetas = Receta.findRecetas();
-            cache.set(Receta.CACHE_GET_PATH, recetas, 300);
+            cache.set(Receta.CACHE_GET_PATH, recetas, 60);
         }
 
         if (recetas == null)
             return notFound();
 
-        if (request().accepts("application/json"))
+        if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(recetas));
-        else if (request().accepts("application/xml"))
+        else if (request.accepts("application/xml"))
             return ok(views.xml.recetas.render(recetas));
 
         return status(415);

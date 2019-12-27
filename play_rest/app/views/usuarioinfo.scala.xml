@@ -1,12 +1,6 @@
 @(user: Usuario)
 <id>@user.id</id>
 <name>@user.username</name>
-<favoritos>
-    @for(fav <- user.favoritos) {
-        <favorito>
-        </favorito>
-    }
-        </favoritos>
 <publicadas>
     @for(fav <- user.publicadas) {
         <publicado>

@@ -1,109 +1,122 @@
 package controllers;
 
+import actions.ValidateAccessAction;
+import misc.ObtenerUsuario;
 import misc.RestError;
 import models.Ingrediente;
 import play.cache.SyncCacheApi;
 import play.data.Form;
 import play.data.FormFactory;
+import play.i18n.MessagesApi;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Security;
 
 import javax.inject.Inject;
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
+@ObtenerUsuario
+@Security.Authenticated(ValidateAccessAction.class)
 public class IngredienteController extends Controller
 {
     @Inject
-    FormFactory formFactory;
+    private FormFactory formFactory;
+
+    @Inject
+    private MessagesApi messageApi;
 
     @Inject
     private SyncCacheApi cache;
 
-    public Result getIngredientes()
+    public Result getIngredientes(Http.Request request)
     {
-        List<Ingrediente> ingredientes = cache.get(Ingrediente.CACHE_GET_PATH);
+        Optional<List<Ingrediente>> optIngredientes = cache.getOptional(Ingrediente.CACHE_GET_PATH);
+        List<Ingrediente> ingredientes = optIngredientes.isPresent() ? optIngredientes.get() : null;
         if (ingredientes == null)
         {
             ingredientes = Ingrediente.findIngredientes();
-            cache.set(Ingrediente.CACHE_GET_PATH, ingredientes, 300);
+            cache.set(Ingrediente.CACHE_GET_PATH, ingredientes, 60);
         }
 
         if (ingredientes == null)
             return notFound();
 
-        if (request().accepts("application/json"))
+        if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(ingredientes));
-        else if (request().accepts("application/xml"))
+        else if (request.accepts("application/xml"))
             return ok(views.xml.ingredientes.render(ingredientes));
 
         return status(415);
     }
 
-    public Result getIngrediente(Long id)
+    public Result getIngrediente(Http.Request request, Long id)
     {
         String cachePath = String.format(Ingrediente.CACHE_GET_PATH_ID, id);
-        Ingrediente ingrediente = cache.get(cachePath);
+        Optional<Ingrediente> ingredienteOpt = cache.getOptional(cachePath);
+        Ingrediente ingrediente = ingredienteOpt.isPresent() ? ingredienteOpt.get() : null;
         if (ingrediente == null)
         {
             ingrediente = Ingrediente.findById(id);
-            cache.set(cachePath, ingrediente, 300);
+            cache.set(cachePath, ingrediente, 60);
         }
 
         if (ingrediente == null)
             return notFound();
 
-        if (request().accepts("application/json"))
+        if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(ingrediente));
-        else if (request().accepts("application/xml"))
+        else if (request.accepts("application/xml"))
             return ok(views.xml.ingrediente.render(ingrediente));
 
         return status(415);
     }
 
-    public Result crearIngrediente()
+    public Result crearIngrediente(Http.Request request)
     {
-        Form<Ingrediente> form = formFactory.form(Ingrediente.class).bindFromRequest();
+        Form<Ingrediente> form = formFactory.form(Ingrediente.class).bindFromRequest(request);
         if (form.hasErrors())
         {
-            if (request().accepts("application/json"))
+            if (request.accepts("application/json"))
                 return badRequest(form.errorsAsJson());
-            else if (request().accepts("application/xml"))
+            else if (request.accepts("application/xml"))
                 return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
-            else
-                return status(415);
+
+            return status(415);
         }
 
         Ingrediente ingrediente = form.get();
         if (Ingrediente.findByName(ingrediente.getNombre()) != null)
         {
-            RestError error = RestError.makeError(Http.Context.current().messages(), 409, "error.existingIngredient");
-            if (request().accepts("application/json"))
+            RestError error = RestError.makeError(messageApi.preferred(request), 409, "error.existingIngredient");
+            if (request.accepts("application/json"))
                 return status(409, play.libs.Json.toJson(error));
-            else if (request().accepts("application/xml"))
+            else if (request.accepts("application/xml"))
                 return status(409, views.xml.resterror.render(error));
-            else
-                return status(415);
+
+            return status(415);
         }
 
         ingrediente.save();
         cache.remove(Ingrediente.CACHE_GET_PATH);
-        if (request().accepts("application/json"))
+        if (request.accepts("application/json"))
             return created(play.libs.Json.toJson(ingrediente));
-        else if (request().accepts("application/xml"))
+        else if (request.accepts("application/xml"))
             return created(views.xml.ingrediente.render(ingrediente));
 
         return status(415);
     }
 
-    public Result updateNombre(Long id)
+    public Result updateNombre(Http.Request request, Long id)
     {
-        Form<Ingrediente> form = formFactory.form(Ingrediente.class).bindFromRequest();
+        Form<Ingrediente> form = formFactory.form(Ingrediente.class).bindFromRequest(request);
         if (form.hasErrors())
         {
-            if (request().accepts("application/json"))
+            if (request.accepts("application/json"))
                 return badRequest(form.errorsAsJson());
-            else if (request().accepts("application/xml"))
+            else if (request.accepts("application/xml"))
                 return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
             else
                 return status(415);
@@ -116,10 +129,10 @@ public class IngredienteController extends Controller
         Ingrediente updRequest = form.get();
         if (updRequest.getNombre().equals(ingrediente.getNombre()))
         {
-            RestError error = RestError.makeError(Http.Context.current().messages(), 409, "error.ingredient.samename");
-            if (request().accepts("application/json"))
+            RestError error = RestError.makeError(messageApi.preferred(request), 409, "error.ingredient.samename");
+            if (request.accepts("application/json"))
                 return status(409, play.libs.Json.toJson(error));
-            else if (request().accepts("application/xml"))
+            else if (request.accepts("application/xml"))
                 return status(409, views.xml.resterror.render(error));
             else
                 return status(415);
@@ -127,10 +140,10 @@ public class IngredienteController extends Controller
 
         if (Ingrediente.findByName(updRequest.getNombre()) != null)
         {
-            RestError error = RestError.makeError(Http.Context.current().messages(), 409, "error.existingIngredient");
-            if (request().accepts("application/json"))
+            RestError error = RestError.makeError(messageApi.preferred(request), 409, "error.existingIngredient");
+            if (request.accepts("application/json"))
                 return status(409, play.libs.Json.toJson(error));
-            else if (request().accepts("application/xml"))
+            else if (request.accepts("application/xml"))
                 return status(409, views.xml.resterror.render(error));
             else
                 return status(415);

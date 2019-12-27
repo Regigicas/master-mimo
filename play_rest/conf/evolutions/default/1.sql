@@ -35,6 +35,7 @@ create table receta_extra (
 create table receta_review (
   autor_id                      bigint,
   receta_id                     bigint,
+  texto                         text,
   nota                          float not null
 );
 
@@ -43,12 +44,6 @@ create table usuario (
   username                      varchar(255),
   password                      varchar(255),
   constraint pk_usuario primary key (id)
-);
-
-create table usuario_receta (
-  usuario_id                    bigint not null,
-  receta_id                     bigint not null,
-  constraint pk_usuario_receta primary key (usuario_id,receta_id)
 );
 
 create index ix_receta_publicante_id on receta (publicante_id);
@@ -67,12 +62,6 @@ alter table receta_review add constraint fk_receta_review_autor_id foreign key (
 
 create index ix_receta_review_receta_id on receta_review (receta_id);
 alter table receta_review add constraint fk_receta_review_receta_id foreign key (receta_id) references receta (id) on delete restrict on update restrict;
-
-create index ix_usuario_receta_usuario on usuario_receta (usuario_id);
-alter table usuario_receta add constraint fk_usuario_receta_usuario foreign key (usuario_id) references usuario (id) on delete restrict on update restrict;
-
-create index ix_usuario_receta_receta on usuario_receta (receta_id);
-alter table usuario_receta add constraint fk_usuario_receta_receta foreign key (receta_id) references receta (id) on delete restrict on update restrict;
 
 
 # --- !Downs
@@ -94,12 +83,6 @@ drop index if exists ix_receta_review_autor_id;
 alter table if exists receta_review drop constraint if exists fk_receta_review_receta_id;
 drop index if exists ix_receta_review_receta_id;
 
-alter table if exists usuario_receta drop constraint if exists fk_usuario_receta_usuario;
-drop index if exists ix_usuario_receta_usuario;
-
-alter table if exists usuario_receta drop constraint if exists fk_usuario_receta_receta;
-drop index if exists ix_usuario_receta_receta;
-
 drop table if exists ingrediente cascade;
 
 drop table if exists receta cascade;
@@ -111,6 +94,4 @@ drop table if exists receta_extra cascade;
 drop table if exists receta_review cascade;
 
 drop table if exists usuario cascade;
-
-drop table if exists usuario_receta cascade;
 

@@ -20,6 +20,7 @@ public class Receta extends Model
     public String nombre;
 
     @Constraints.Required
+    @Constraints.MinLength(5)
     @Lob
     public String preparacion;
 
@@ -27,10 +28,7 @@ public class Receta extends Model
     public Usuario publicante;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    public List<Ingrediente> ingredientes = new LinkedList<>();
-
-    @ManyToMany(mappedBy = "favoritos")
-    public List<Usuario> favoritos = new LinkedList<>();
+    public List<Ingrediente> ingredientes;
 
     @OneToOne(cascade = CascadeType.ALL)
     public RecetaExtra extra;
@@ -71,11 +69,6 @@ public class Receta extends Model
     public List<Ingrediente> getIngredientes()
     {
         return ingredientes;
-    }
-
-    public List<Usuario> getFavoritos()
-    {
-        return favoritos;
     }
 
     public RecetaExtra getExtra()

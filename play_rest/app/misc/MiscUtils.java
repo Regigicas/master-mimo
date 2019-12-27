@@ -25,6 +25,6 @@ public class MiscUtils
         for (byte b : hash)
             sb.append(String.format("%02x", b));
 
-        return sb.toString();
+        return sb.toString().toUpperCase();
     }
 }

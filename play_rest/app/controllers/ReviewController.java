@@ -1,111 +1,164 @@
 package controllers;
 
+import actions.ValidateAccessAction;
+import forms.UsuarioAccessTryData;
+import misc.ObtenerUsuario;
+import models.Receta;
 import models.RecetaReview;
+import models.Usuario;
 import play.cache.SyncCacheApi;
+import play.data.Form;
 import play.data.FormFactory;
+import play.i18n.MessagesApi;
+import play.libs.typedmap.TypedKey;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Security;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 
+@ObtenerUsuario
+@Security.Authenticated(ValidateAccessAction.class)
 public class ReviewController extends Controller
 {
     @Inject
-    FormFactory formFactory;
+    private FormFactory formFactory;
+
+    @Inject
+    private MessagesApi messageApi;
 
     @Inject
     private SyncCacheApi cache;
 
-    public Result getReviewsAutor(Long id)
+    public Result getReviewsAutor(Http.Request request, Long id)
     {
         String cachePath = String.format(RecetaReview.CACHE_GET_PATH_AUTOR, id);
-        List<RecetaReview> reviews = cache.get(cachePath);
+        Optional<List<RecetaReview>> optReviews = cache.getOptional(cachePath);
+        List<RecetaReview> reviews = optReviews.isPresent() ? optReviews.get() : null;
         if (reviews == null)
         {
             reviews = RecetaReview.findReviewsByAuthor(id);
-            cache.set(cachePath, reviews, 300);
+            cache.set(cachePath, reviews, 60);
         }
 
         if (reviews == null)
             return notFound();
 
-        if (request().accepts("application/json"))
+        if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(reviews));
-        else if (request().accepts("application/xml"))
+        else if (request.accepts("application/xml"))
             return ok(views.xml.reviewsautor.render(reviews));
 
         return status(415);
     }
 
-    public Result getReviewsRecipe(Long id)
+    public Result getReviewsRecipe(Http.Request request, Long id)
     {
         String cachePath = String.format(RecetaReview.CACHE_GET_PATH_RECETA, id);
-        List<RecetaReview> reviews = cache.get(cachePath);
+        Optional<List<RecetaReview>> optReviews = cache.getOptional(cachePath);
+        List<RecetaReview> reviews = optReviews.isPresent() ? optReviews.get() : null;
         if (reviews == null)
         {
             reviews = RecetaReview.findReviewsByRecipe(id);
-            cache.set(cachePath, reviews, 300);
+            cache.set(cachePath, reviews, 60);
         }
 
         if (reviews == null)
             return notFound();
 
-        if (request().accepts("application/json"))
+        if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(reviews));
-        else if (request().accepts("application/xml"))
+        else if (request.accepts("application/xml"))
             return ok(views.xml.reviewsautor.render(reviews));
 
         return status(415);
     }
 
-    private Result deleteReviewImpl(Long autorId, Long recetaId)
+    public Result deleteReviewByRecipeAndAuthor(Http.Request request, Long recetaId)
     {
-        RecetaReview review = RecetaReview.findReviewByAuthorAndRecipe(autorId, recetaId);
+        Usuario usuario = request.attrs().get(UsuarioAccessTryData.USER_TYPEDKEY).getUsuario();
+
+        RecetaReview review = RecetaReview.findReviewByAuthorAndRecipe(usuario.getId(), recetaId);
         if (review != null)
             review.delete();
 
         return noContent();
     }
 
-    public Result deleteReviewByAuthorAndRecipe(Long recetaId, Long autorId)
-    {
-        return deleteReviewImpl(autorId, recetaId);
-    }
-
-    public Result deleteReviewByRecipeAndAuthor(Long autorId, Long recetaId)
-    {
-        return deleteReviewImpl(autorId, recetaId);
-    }
-
-    private Result getReviewByImpl(Long autorId, Long recetaId)
+    private Result getReviewByImpl(Http.Request request, Long autorId, Long recetaId)
     {
         String cachePath = String.format(RecetaReview.CACHE_GET_PATH_AUTOR_RECETA, autorId, recetaId);
-        RecetaReview review = cache.get(cachePath);
+        Optional<RecetaReview> optReview = cache.getOptional(cachePath);
+        RecetaReview review = optReview.isPresent() ? optReview.get() : null;
         if (review == null)
         {
             review = RecetaReview.findReviewByAuthorAndRecipe(autorId, recetaId);
-            cache.set(cachePath, review, 300);
+            cache.set(cachePath, review, 60);
         }
 
         if (review == null)
             return notFound();
 
-        if (request().accepts("application/json"))
+        if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(review));
-        else if (request().accepts("application/xml"))
+        else if (request.accepts("application/xml"))
             return ok(views.xml.review.render(review));
 
         return status(415);
     }
 
-    public Result getReviewByAuthorAndRecipe(Long autorId, Long recetaId)
+    public Result getReviewByAuthorAndRecipe(Http.Request request, Long autorId, Long recetaId)
     {
-        return getReviewByImpl(autorId, recetaId);
+        return getReviewByImpl(request, autorId, recetaId);
     }
 
-    public Result getReviewByRecipeAndAuthor(Long recetaId, Long autorId)
+    public Result getReviewByRecipeAndAuthor(Http.Request request, Long recetaId, Long autorId)
     {
-        return getReviewByImpl(autorId, recetaId);
+        return getReviewByImpl(request, autorId, recetaId);
+    }
+
+    public Result postOrUpdateReview(Http.Request request, Long recetaId)
+    {
+        Form<RecetaReview> form = formFactory.form(RecetaReview.class).bindFromRequest(request);
+        if (form.hasErrors())
+        {
+            if (request.accepts("application/json"))
+                return badRequest(form.errorsAsJson());
+            else if (request.accepts("application/xml"))
+                return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
+
+            return status(415);
+        }
+
+        Usuario usuario = request.attrs().get(UsuarioAccessTryData.USER_TYPEDKEY).getUsuario();
+        RecetaReview review = RecetaReview.findReviewByAuthorAndRecipe(usuario.getId(), recetaId);
+        boolean nuevaReceta = false;
+        if (review == null)
+        {
+            nuevaReceta = true;
+            review = new RecetaReview();
+            Receta receta = Receta.findById(recetaId);
+            if (receta == null)
+                return notFound();
+
+            review.setAutor(usuario);
+            review.setReceta(receta);
+        }
+
+        RecetaReview updForm = form.get();
+        review.setNota(updForm.getNota());
+        review.setTexto(updForm.getTexto());
+
+        if (nuevaReceta)
+        {
+            review.save();
+            return created();
+        }
+
+        review.update();
+        return ok();
     }
 }

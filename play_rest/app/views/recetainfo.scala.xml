@@ -13,14 +13,6 @@
     }
 </ingredientes>
 
-<favoritos>
-    @for(user <- rct.favoritos) {
-        <usuario>
-            @usuarioinfo(user)
-        </usuario>
-    }
-</favoritos>
-
 <reviews>
     @for(review <- rct.reviews) {
         <review>

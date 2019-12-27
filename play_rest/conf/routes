@@ -5,28 +5,27 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 
-GET     /usuarios                  controllers.UsuarioController.getUsuarios
-GET     /usuarios/:id              controllers.UsuarioController.getUsuario(id: Long)
-POST    /usuarios                  controllers.UsuarioController.crearUsuario
-PATCH   /usuarios/:id/password     controllers.UsuarioController.updateUserPass(id: Long)
+GET     /usuarios                   controllers.UsuarioController.getUsuarios(request: Request)
+GET     /usuarios/:id               controllers.UsuarioController.getUsuario(request: Request, id: Long)
+POST    /usuarios                   controllers.UsuarioController.crearUsuario(request: Request)
+PATCH   /usuarios/password          controllers.UsuarioController.updateUserPass(request: Request)
 
-GET     /ingredientes              controllers.IngredienteController.getIngredientes
-GET     /ingredientes/:id          controllers.IngredienteController.getIngrediente(id: Long)
-POST    /ingredientes              controllers.IngredienteController.crearIngrediente
-PATCH   /ingredientes/:id          controllers.IngredienteController.updateNombre(id: Long)
+GET     /ingredientes               controllers.IngredienteController.getIngredientes(request: Request)
+GET     /ingredientes/:id           controllers.IngredienteController.getIngrediente(request: Request, id: Long)
+POST    /ingredientes               controllers.IngredienteController.crearIngrediente(request: Request)
+PATCH   /ingredientes/:id           controllers.IngredienteController.updateNombre(request: Request, id: Long)
 
-GET     /recetas                   controllers.RecetaController.getRecetas
-DELETE  /recetas/:id               controllers.RecetaController.deleteReceta(id: Long)
-DELETE  /recetas/autor/:id         controllers.RecetaController.deleteRecetasAutor(id: Long)
+GET     /recetas                    controllers.RecetaController.getRecetas(request: Request)
+DELETE  /recetas/:id                controllers.RecetaController.deleteReceta(id: Long)
+DELETE  /recetas/autor/:id          controllers.RecetaController.deleteRecetasAutor(id: Long)
 # Post y parchear recetas
 
-GET     /reviews/autor/:id          controllers.ReviewController.getReviewsAutor(id: Long)
-GET     /reviews/receta/:id         controllers.ReviewController.getReviewsRecipe(id: Long)
-GET     /reviews/autor/:autorId/:recetaId controllers.ReviewController.getReviewByAuthorAndRecipe(autorId: Long, recetaId: Long)
-GET     /reviews/receta/:recetaId/:autorId controllers.ReviewController.getReviewByRecipeAndAuthor(recetaId: Long, autorId: Long)
-DELETE  /reviews/autor/:autorId/:recetaId  controllers.ReviewController.deleteReviewByAuthorAndRecipe(autorId: Long, recetaId: Long)
-DELETE  /reviews/receta/:recetaId/:autorId controllers.ReviewController.deleteReviewByRecipeAndAuthor(recetaId: Long, autorId: Long)
-# Post y parchear reviews
+GET     /reviews/autor/:id          controllers.ReviewController.getReviewsAutor(request: Request, id: Long)
+GET     /reviews/receta/:id         controllers.ReviewController.getReviewsRecipe(request: Request, id: Long)
+GET     /reviews/autor/:autorId/:recetaId  controllers.ReviewController.getReviewByAuthorAndRecipe(request: Request, autorId: Long, recetaId: Long)
+GET     /reviews/receta/:recetaId/:autorId controllers.ReviewController.getReviewByRecipeAndAuthor(request: Request, recetaId: Long, autorId: Long)
+DELETE  /reviews/:recetaId          controllers.ReviewController.deleteReviewByRecipeAndAuthor(request: Request, recetaId: Long)
+POST    /reviews/:recetaId          controllers.ReviewController.postOrUpdateReview(request: Request, recetaId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

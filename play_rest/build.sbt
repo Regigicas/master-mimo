@@ -1,4 +1,4 @@
-name := """play-java-starter-example"""
+name := """play_rest"""
 
 version := "1.0-SNAPSHOT"
 
@@ -10,7 +10,8 @@ javacOptions ++= Seq(
   "-encoding", "UTF-8",
   "-parameters",
   "-Xlint:unchecked",
-  "-Xlint:deprecation"
+  "-Xlint:deprecation",
+  "-Werror"
 )
 
 libraryDependencies += guice

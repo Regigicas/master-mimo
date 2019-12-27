@@ -5,6 +5,7 @@ import io.ebean.Finder;
 import io.ebean.Model;
 import misc.MiscUtils;
 import play.data.validation.Constraints;
+import play.libs.typedmap.TypedKey;
 import validators.NoWhitespaceValidator;
 
 import javax.persistence.*;
@@ -29,9 +30,6 @@ public class Usuario extends Model
     @Constraints.ValidateWith(NoWhitespaceValidator.class)
     @JsonIgnore
     public String password;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    public List<Receta> favoritos = new LinkedList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "publicante")
     public List<Receta> publicadas;
@@ -76,11 +74,6 @@ public class Usuario extends Model
         this.username = username;
     }
 
-    public List<Receta> getFavoritos()
-    {
-        return favoritos;
-    }
-
     public List<Receta> getPublicadas()
     {
         return publicadas;
@@ -111,6 +104,6 @@ public class Usuario extends Model
 
     public static Usuario findByUsername(String name)
     {
-        return finder.query().where().like("username", name).setMaxRows(1).findOne();
+        return finder.query().where().ilike("username", name).setMaxRows(1).findOne();
     }
 }

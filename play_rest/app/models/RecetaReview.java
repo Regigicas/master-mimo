@@ -3,9 +3,12 @@ package models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ebean.Finder;
 import io.ebean.Model;
+import play.data.validation.Constraints;
 
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.validation.Constraint;
 import java.util.List;
 
 @Entity
@@ -17,6 +20,14 @@ public class RecetaReview extends Model
     @ManyToOne
     public Receta receta;
 
+    @Constraints.Required
+    @Constraints.MinLength(5)
+    @Lob
+    public String texto;
+
+    @Constraints.Required
+    @Constraints.Min(0)
+    @Constraints.Max(5)
     public double nota;
 
     public Usuario getAutor()
@@ -47,6 +58,16 @@ public class RecetaReview extends Model
     public void setReceta(Receta receta)
     {
         this.receta = receta;
+    }
+
+    public String getTexto()
+    {
+        return texto;
+    }
+
+    public void setTexto(String texto)
+    {
+        this.texto = texto;
     }
 
     @JsonIgnore
