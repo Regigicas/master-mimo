@@ -19,6 +19,9 @@ public class RecetaExtra extends Model
 
     public Timestamp fechaPublicacion;
 
+    @OneToOne(mappedBy = "extra")
+    public Receta receta;
+
     public float getRating()
     {
         return rating;
@@ -43,7 +46,4 @@ public class RecetaExtra extends Model
     {
         return receta;
     }
-
-    @OneToOne(mappedBy = "extra")
-    public Receta receta;
 }

@@ -35,15 +35,12 @@ public class UsuarioController extends Controller
     public Result getUsuarios(Http.Request request)
     {
         Optional<List<Usuario>> optUsuarios = cache.getOptional(Usuario.CACHE_GET_PATH);
-        List<Usuario> usuarios = optUsuarios.isPresent() ? optUsuarios.get() : null;
+        List<Usuario> usuarios = optUsuarios.orElse(null);
         if (usuarios == null)
         {
             usuarios = Usuario.findUsuarios();
-            cache.set(Usuario.CACHE_GET_PATH, usuarios, 60);
+            cache.set(Usuario.CACHE_GET_PATH, usuarios, 120);
         }
-
-        if (usuarios == null)
-            return notFound();
 
         if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(usuarios));
@@ -59,15 +56,15 @@ public class UsuarioController extends Controller
     {
         String cachePath = String.format(Usuario.CACHE_GET_PATH_ID, id);
         Optional<Usuario> optUsuario = cache.getOptional(cachePath);
-        Usuario usuario = optUsuario.isPresent() ? optUsuario.get() : null;
+        Usuario usuario = optUsuario.orElse(null);
         if (usuario == null)
         {
             usuario = Usuario.findById(id);
-            cache.set(cachePath, usuario, 60);
-        }
+            if (usuario == null)
+                return notFound();
 
-        if (usuario == null)
-            return notFound();
+            cache.set(cachePath, usuario, 120);
+        }
 
         if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(usuario));

@@ -1,8 +1,6 @@
 package misc;
 
 import play.i18n.Messages;
-import play.i18n.MessagesApi;
-import play.mvc.Http;
 
 public class RestError
 {

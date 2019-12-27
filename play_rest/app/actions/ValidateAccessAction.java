@@ -12,7 +12,7 @@ public class ValidateAccessAction extends Security.Authenticator
     public Optional<String> getUsername(Http.Request req)
     {
         Optional<UsuarioAccessTryData> optUser = req.attrs().getOptional(UsuarioAccessTryData.USER_TYPEDKEY);
-        UsuarioAccessTryData user = optUser.isPresent() ? optUser.get() : null;
+        UsuarioAccessTryData user = optUser.orElse(null);
         if (user == null || user.getUsuario() == null ||
             !user.getUsuario().getPassword().equals(user.getUserData()[1].toUpperCase()))
             return Optional.empty();

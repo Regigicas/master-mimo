@@ -2,14 +2,12 @@ package misc;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Base64;
 
 public class MiscUtils
 {
     public static String MakeHash(String password)
     {
-        MessageDigest md = null;
+        MessageDigest md;
         try
         {
             md = MessageDigest.getInstance("SHA-256");
@@ -20,7 +18,7 @@ public class MiscUtils
         }
 
         byte[] hash = md.digest(password.getBytes());
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for (byte b : hash)
             sb.append(String.format("%02x", b));

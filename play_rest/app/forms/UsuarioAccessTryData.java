@@ -28,5 +28,5 @@ public class UsuarioAccessTryData
         this.userData = userData;
     }
 
-    public static final TypedKey<UsuarioAccessTryData> USER_TYPEDKEY = TypedKey.<UsuarioAccessTryData>create("userData");
+    public static final TypedKey<UsuarioAccessTryData> USER_TYPEDKEY = TypedKey.create("userData");
 }

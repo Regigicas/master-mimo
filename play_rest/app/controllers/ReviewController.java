@@ -10,7 +10,6 @@ import play.cache.SyncCacheApi;
 import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.MessagesApi;
-import play.libs.typedmap.TypedKey;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -37,15 +36,12 @@ public class ReviewController extends Controller
     {
         String cachePath = String.format(RecetaReview.CACHE_GET_PATH_AUTOR, id);
         Optional<List<RecetaReview>> optReviews = cache.getOptional(cachePath);
-        List<RecetaReview> reviews = optReviews.isPresent() ? optReviews.get() : null;
+        List<RecetaReview> reviews = optReviews.orElse(null);
         if (reviews == null)
         {
             reviews = RecetaReview.findReviewsByAuthor(id);
-            cache.set(cachePath, reviews, 60);
+            cache.set(cachePath, reviews, 120);
         }
-
-        if (reviews == null)
-            return notFound();
 
         if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(reviews));
@@ -59,15 +55,12 @@ public class ReviewController extends Controller
     {
         String cachePath = String.format(RecetaReview.CACHE_GET_PATH_RECETA, id);
         Optional<List<RecetaReview>> optReviews = cache.getOptional(cachePath);
-        List<RecetaReview> reviews = optReviews.isPresent() ? optReviews.get() : null;
+        List<RecetaReview> reviews = optReviews.orElse(null);
         if (reviews == null)
         {
             reviews = RecetaReview.findReviewsByRecipe(id);
-            cache.set(cachePath, reviews, 60);
+            cache.set(cachePath, reviews, 120);
         }
-
-        if (reviews == null)
-            return notFound();
 
         if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(reviews));
@@ -80,10 +73,14 @@ public class ReviewController extends Controller
     public Result deleteReviewByRecipeAndAuthor(Http.Request request, Long recetaId)
     {
         Usuario usuario = request.attrs().get(UsuarioAccessTryData.USER_TYPEDKEY).getUsuario();
-
         RecetaReview review = RecetaReview.findReviewByAuthorAndRecipe(usuario.getId(), recetaId);
         if (review != null)
+        {
+            cache.remove(String.format(RecetaReview.CACHE_GET_PATH_AUTOR, review.getAutor().getId()));
+            cache.remove(String.format(RecetaReview.CACHE_GET_PATH_RECETA, review.getReceta().getId()));
+            cache.remove(String.format(RecetaReview.CACHE_GET_PATH_AUTOR_RECETA, review.getAutor().getId(), review.getReceta().getId()));
             review.delete();
+        }
 
         return noContent();
     }
@@ -92,11 +89,11 @@ public class ReviewController extends Controller
     {
         String cachePath = String.format(RecetaReview.CACHE_GET_PATH_AUTOR_RECETA, autorId, recetaId);
         Optional<RecetaReview> optReview = cache.getOptional(cachePath);
-        RecetaReview review = optReview.isPresent() ? optReview.get() : null;
+        RecetaReview review = optReview.orElse(null);
         if (review == null)
         {
             review = RecetaReview.findReviewByAuthorAndRecipe(autorId, recetaId);
-            cache.set(cachePath, review, 60);
+            cache.set(cachePath, review, 120);
         }
 
         if (review == null)
@@ -151,6 +148,10 @@ public class ReviewController extends Controller
         RecetaReview updForm = form.get();
         review.setNota(updForm.getNota());
         review.setTexto(updForm.getTexto());
+
+        cache.remove(String.format(RecetaReview.CACHE_GET_PATH_AUTOR, review.getAutor().getId()));
+        cache.remove(String.format(RecetaReview.CACHE_GET_PATH_RECETA, review.getReceta().getId()));
+        cache.remove(String.format(RecetaReview.CACHE_GET_PATH_AUTOR_RECETA, review.getAutor().getId(), review.getReceta().getId()));
 
         if (nuevaReceta)
         {

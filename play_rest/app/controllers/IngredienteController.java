@@ -34,15 +34,12 @@ public class IngredienteController extends Controller
     public Result getIngredientes(Http.Request request)
     {
         Optional<List<Ingrediente>> optIngredientes = cache.getOptional(Ingrediente.CACHE_GET_PATH);
-        List<Ingrediente> ingredientes = optIngredientes.isPresent() ? optIngredientes.get() : null;
+        List<Ingrediente> ingredientes = optIngredientes.orElse(null);
         if (ingredientes == null)
         {
             ingredientes = Ingrediente.findIngredientes();
-            cache.set(Ingrediente.CACHE_GET_PATH, ingredientes, 60);
+            cache.set(Ingrediente.CACHE_GET_PATH, ingredientes, 120);
         }
-
-        if (ingredientes == null)
-            return notFound();
 
         if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(ingredientes));
@@ -56,15 +53,15 @@ public class IngredienteController extends Controller
     {
         String cachePath = String.format(Ingrediente.CACHE_GET_PATH_ID, id);
         Optional<Ingrediente> ingredienteOpt = cache.getOptional(cachePath);
-        Ingrediente ingrediente = ingredienteOpt.isPresent() ? ingredienteOpt.get() : null;
+        Ingrediente ingrediente = ingredienteOpt.orElse(null);
         if (ingrediente == null)
         {
             ingrediente = Ingrediente.findById(id);
-            cache.set(cachePath, ingrediente, 60);
-        }
+            if (ingrediente == null)
+                return notFound();
 
-        if (ingrediente == null)
-            return notFound();
+            cache.set(cachePath, ingrediente, 120);
+        }
 
         if (request.accepts("application/json"))
             return ok(play.libs.Json.toJson(ingrediente));
@@ -118,8 +115,8 @@ public class IngredienteController extends Controller
                 return badRequest(form.errorsAsJson());
             else if (request.accepts("application/xml"))
                 return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
-            else
-                return status(415);
+
+            return status(415);
         }
 
         Ingrediente ingrediente = Ingrediente.findById(id);
@@ -134,8 +131,8 @@ public class IngredienteController extends Controller
                 return status(409, play.libs.Json.toJson(error));
             else if (request.accepts("application/xml"))
                 return status(409, views.xml.resterror.render(error));
-            else
-                return status(415);
+
+            return status(415);
         }
 
         if (Ingrediente.findByName(updRequest.getNombre()) != null)
@@ -145,8 +142,8 @@ public class IngredienteController extends Controller
                 return status(409, play.libs.Json.toJson(error));
             else if (request.accepts("application/xml"))
                 return status(409, views.xml.resterror.render(error));
-            else
-                return status(415);
+
+            return status(415);
         }
 
         ingrediente.setNombre(updRequest.getNombre());
