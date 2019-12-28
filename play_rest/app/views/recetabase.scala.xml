@@ -1,0 +1,35 @@
+@(rct: Receta)
+<receta>
+    <id>@rct.id</id>
+    <nombre>@rct.nombre</nombre>
+    <preparacion>@rct.preparacion</preparacion>
+    <extra>
+        <id>@rct.extra.id</id>
+        <rating>@rct.extra.getRating()</rating>
+        <fechaPublicacion>@rct.extra.fechaPublicacion</fechaPublicacion>
+    </extra>
+    <publicante>
+        <id>@rct.publicante.id</id>
+        <username>@rct.publicante.getUsername()</username>
+    </publicante>
+    <ingredientes>
+        @for(igr <- rct.ingredientes) {
+        <ingrediente>
+            <id>@igr.id</id>
+            <nombre>@igr.nombre</nombre>
+        </ingrediente>
+        }
+    </ingredientes>
+    <reviews>
+        @for(rvw <- rct.reviews) {
+        <review>
+            <autor>
+                <id>@rvw.autor.id</id>
+                <username>@rvw.autor.getUsername()</username>
+            </autor>
+            <nota>@rvw.nota</nota>
+            <texto>@rvw.texto</texto>
+        </review>
+        }
+    </reviews>
+</receta>

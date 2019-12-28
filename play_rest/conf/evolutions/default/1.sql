@@ -12,7 +12,7 @@ create table ingrediente (
 create table receta (
   id                            bigserial not null,
   nombre                        varchar(255),
-  preparacion                   text,
+  preparacion                   TEXT,
   publicante_id                 bigint,
   extra_id                      bigint,
   constraint uq_receta_extra_id unique (extra_id),
@@ -35,7 +35,7 @@ create table receta_extra (
 create table receta_review (
   autor_id                      bigint,
   receta_id                     bigint,
-  texto                         text,
+  texto                         TEXT,
   nota                          float not null
 );
 

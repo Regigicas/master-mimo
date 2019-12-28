@@ -1,15 +1,16 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.ebean.Finder;
 import io.ebean.Model;
 import misc.MiscUtils;
 import play.data.validation.Constraints;
-import play.libs.typedmap.TypedKey;
 import validators.NoWhitespaceValidator;
 
 import javax.persistence.*;
-import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -32,8 +33,10 @@ public class Usuario extends Model
     public String password;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "publicante")
+    @JsonIgnoreProperties("publicante")
     public List<Receta> publicadas;
 
+    @JsonIgnoreProperties("autor")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "autor")
     public List<RecetaReview> reviews;
 
@@ -82,6 +85,11 @@ public class Usuario extends Model
     public List<RecetaReview> getReviews()
     {
         return reviews;
+    }
+
+    public void setReviews(List<RecetaReview> reviews)
+    {
+        this.reviews = reviews;
     }
 
     @JsonIgnore

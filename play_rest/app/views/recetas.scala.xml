@@ -2,8 +2,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <recetas>
     @for(rct <- recetas) {
-        <receta>
-            @recetainfo(rct)
-        </receta>
+        @recetabase(rct)
     }
 </recetas>

@@ -16,9 +16,11 @@ POST    /ingredientes               controllers.IngredienteController.crearIngre
 PATCH   /ingredientes/:id           controllers.IngredienteController.updateNombre(request: Request, id: Long)
 
 GET     /recetas                    controllers.RecetaController.getRecetas(request: Request)
-DELETE  /recetas/:id                controllers.RecetaController.deleteReceta(id: Long)
-DELETE  /recetas/autor/:id          controllers.RecetaController.deleteRecetasAutor(id: Long)
-# Post y parchear recetas
+GET     /recetas/:id                controllers.RecetaController.getReceta(request: Request, id: Long)
+DELETE  /recetas/:id                controllers.RecetaController.deleteReceta(request: Request, id: Long)
+DELETE  /recetas/autor              controllers.RecetaController.deleteRecetasAutor(request: Request)
+POST    /recetas                    controllers.RecetaController.postReceta(request: Request)
+# Parchear recetas, revisar los xml/json y meter tests
 
 GET     /reviews/autor/:id          controllers.ReviewController.getReviewsAutor(request: Request, id: Long)
 GET     /reviews/receta/:id         controllers.ReviewController.getReviewsRecipe(request: Request, id: Long)

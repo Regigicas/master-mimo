@@ -1,9 +1,10 @@
 @(ingredientes: List[Ingrediente])
 <?xml version="1.0" encoding="UTF-8" ?>
 <ingredientes>
-        @for(ingrd <- ingredientes) {
-            <ingrediente>
-                @ingredienteinfo(ingrd)
-            </ingrediente>
-        }
+    @for(ingrd <- ingredientes) {
+        <ingrediente>
+            <id>@ingrd.id</id>
+            <nombre>@ingrd.nombre</nombre>
+        </ingrediente>
+    }
 </ingredientes>

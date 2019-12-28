@@ -1,0 +1,17 @@
+@(user: Usuario)
+<usuario>
+    <id>@user.id</id>
+    <username>@user.username</username>
+    <publicadas>
+        @if(user.publicadas != null) {
+        @for(rct <- user.publicadas) {
+            @usuarioreceta(rct)
+        }}
+    </publicadas>
+    <reviews>
+        @if(user.reviews != null) {
+        @for(rvw <- user.reviews) {
+            @usuarioreview(rvw)
+        }}
+    </reviews>
+</usuario>

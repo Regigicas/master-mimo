@@ -1,9 +1,0 @@
-@(user: Usuario)
-<id>@user.id</id>
-<name>@user.username</name>
-<publicadas>
-    @for(fav <- user.publicadas) {
-        <publicado>
-        </publicado>
-    }
-        </publicadas>

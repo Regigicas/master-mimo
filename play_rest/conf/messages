@@ -4,3 +4,5 @@ error.oldpasswordMismatch=Old password don''t match
 error.samepassword=New password must be different from old password
 error.existingIngredient=There is already an ingredient with that name
 error.ingredient.samename=The new name must be different from the old one
+error.musthaveingredients=A recipe must have 2 or more ingredients
+error.duplicatedrecipe=You already have a recipe with that name

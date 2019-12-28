@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ebean.Model;
 
 import javax.persistence.Entity;
@@ -15,19 +16,20 @@ public class RecetaExtra extends Model
     @GeneratedValue
     public Long id;
 
-    public float rating;
+    public double rating;
 
     public Timestamp fechaPublicacion;
 
     @OneToOne(mappedBy = "extra")
+    @JsonIgnore
     public Receta receta;
 
-    public float getRating()
+    public double getRating()
     {
         return rating;
     }
 
-    public void setRating(float rating)
+    public void setRating(double rating)
     {
         this.rating = rating;
     }
@@ -45,5 +47,10 @@ public class RecetaExtra extends Model
     public Receta getReceta()
     {
         return receta;
+    }
+
+    public void setReceta(Receta receta)
+    {
+        this.receta = receta;
     }
 }

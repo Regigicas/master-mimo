@@ -1,6 +1,7 @@
 package controllers;
 
 import actions.ValidateAccessAction;
+import com.fasterxml.jackson.databind.JsonNode;
 import forms.UpdateUserPassword;
 import forms.UsuarioAccessTryData;
 import misc.ObtenerUsuario;
@@ -9,6 +10,7 @@ import models.Usuario;
 import play.cache.SyncCacheApi;
 import play.data.Form;
 import play.data.FormFactory;
+import play.data.validation.ValidationError;
 import play.i18n.MessagesApi;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -128,17 +130,15 @@ public class UsuarioController extends Controller
         }
 
         Usuario user = request.attrs().get(UsuarioAccessTryData.USER_TYPEDKEY).getUsuario();
-        if (user == null)
-            return notFound();
-
         UpdateUserPassword updRequest = form.get();
-        if (updRequest.getOldPassword().equals(updRequest.getNewPassword()))
+        ValidationError verror = updRequest.validate();
+        if (verror != null)
         {
-            RestError error = RestError.makeError(messageApi.preferred(request), 409, "error.samepassword");
+            form = form.withError(verror);
             if (request.accepts("application/json"))
-                return status(409, play.libs.Json.toJson(error));
+                return badRequest(form.errorsAsJson());
             else if (request.accepts("application/xml"))
-                return status(409, views.xml.resterror.render(error));
+                return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
 
             return status(415);
         }

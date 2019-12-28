@@ -1,28 +1,30 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.ebean.Finder;
 import io.ebean.Model;
 import play.data.validation.Constraints;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.validation.Constraint;
 import java.util.List;
 
 @Entity
 public class RecetaReview extends Model
 {
     @ManyToOne
+    @JsonIgnoreProperties({"reviews", "publicadas"})
     public Usuario autor;
 
     @ManyToOne
+    @JsonIgnoreProperties({"reviews", "publicante"})
     public Receta receta;
 
     @Constraints.Required
     @Constraints.MinLength(5)
-    @Lob
+    @Column(columnDefinition = "TEXT")
     public String texto;
 
     @Constraints.Required

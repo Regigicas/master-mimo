@@ -1,5 +1,6 @@
 @(ingrediente: Ingrediente)
 <?xml version="1.0" encoding="UTF-8" ?>
-<usuario>
-    @ingredienteinfo(ingrediente)
-</usuario>
+<ingrediente>
+    <id>@ingrediente.id</id>
+    <nombre>@ingrediente.nombre</nombre>
+</ingrediente>

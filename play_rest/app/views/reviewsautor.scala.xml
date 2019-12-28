@@ -1,14 +1,7 @@
-@(reviewList: List[RecetaReview])
+@(reviews: List[RecetaReview])
 <?xml version="1.0" encoding="UTF-8" ?>
 <reviews>
-    @if(!reviewList.isEmpty()) {
-        <autor>@usuarioinfo(reviewList(0).autor)</autor>
-        @for(rvw <- reviewList) {
-            <review>
-                <receta>@recetainfo(rvw.receta)</receta>
-                <nota>@rvw.nota</nota>
-            </review>
-        }
+    @for(rvw <- reviews) {
+        @reviewbase(rvw)
     }
 </reviews>
-w

@@ -1,7 +1,3 @@
 @(rvw: RecetaReview)
 <?xml version="1.0" encoding="UTF-8" ?>
-<review>
-    <autor>@usuarioinfo(rvw.autor)</autor>
-    <receta>@recetainfo(rvw.receta)</receta>
-    <nota>@rvw.nota</nota>
-</review>
+@reviewbase(rvw)

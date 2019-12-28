@@ -23,6 +23,7 @@ public class Ingrediente extends Model
     public String nombre;
 
     @ManyToMany(mappedBy = "ingredientes")
+    @JsonIgnore
     public List<Receta> recetas = new LinkedList<>();
 
     public String getNombre()
@@ -33,6 +34,11 @@ public class Ingrediente extends Model
     public void setNombre(String nombre)
     {
         this.nombre = nombre;
+    }
+
+    public void addReceta(Receta rct)
+    {
+        recetas.add(rct);
     }
 
     @JsonIgnore
@@ -55,11 +61,11 @@ public class Ingrediente extends Model
 
     public static Ingrediente findByName(String name)
     {
-        return finder.query().where().like("nombre", name).setMaxRows(1).findOne();
+        return finder.query().where().ilike("nombre", name).setMaxRows(1).findOne();
     }
 
     public static List<Ingrediente> findListByName(String name)
     {
-        return finder.query().where().like("nombre", name).findList();
+        return finder.query().where().ilike("nombre", name).findList();
     }
 }

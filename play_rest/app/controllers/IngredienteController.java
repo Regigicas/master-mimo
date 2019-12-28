@@ -14,7 +14,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 
 import javax.inject.Inject;
-import javax.swing.text.html.Option;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +33,7 @@ public class IngredienteController extends Controller
 
     public Result getIngredientes(Http.Request request)
     {
+        String nameParam = request.getQueryString("name");
         Optional<List<Ingrediente>> optIngredientes = cache.getOptional(Ingrediente.CACHE_GET_PATH);
         List<Ingrediente> ingredientes = optIngredientes.orElse(null);
         if (ingredientes == null)
@@ -41,10 +42,14 @@ public class IngredienteController extends Controller
             cache.set(Ingrediente.CACHE_GET_PATH, ingredientes, 120);
         }
 
+        List<Ingrediente> result = new LinkedList<>(ingredientes);
+        if (nameParam != null && !result.isEmpty())
+            result.removeIf(r -> !r.getNombre().toUpperCase().contains(nameParam.toUpperCase()));
+
         if (request.accepts("application/json"))
-            return ok(play.libs.Json.toJson(ingredientes));
+            return ok(play.libs.Json.toJson(result));
         else if (request.accepts("application/xml"))
-            return ok(views.xml.ingredientes.render(ingredientes));
+            return ok(views.xml.ingredientes.render(result));
 
         return status(415);
     }

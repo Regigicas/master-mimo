@@ -2,8 +2,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <usuarios>
     @for(user <- usuarios) {
-        <usuario>
-            @usuarioinfo(user)
-        </usuario>
+        @usuariobase(user)
     }
 </usuarios>

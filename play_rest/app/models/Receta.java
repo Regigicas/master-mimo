@@ -1,12 +1,14 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.ebean.Finder;
 import io.ebean.Model;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
-import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -21,10 +23,11 @@ public class Receta extends Model
 
     @Constraints.Required
     @Constraints.MinLength(5)
-    @Lob
+    @Column(columnDefinition = "TEXT")
     public String preparacion;
 
     @ManyToOne
+    @JsonIgnoreProperties({"publicadas", "reviews"})
     public Usuario publicante;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -34,6 +37,7 @@ public class Receta extends Model
     public RecetaExtra extra;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "receta")
+    @JsonIgnoreProperties("receta")
     public List<RecetaReview> reviews;
 
     public Long getId()
@@ -81,6 +85,33 @@ public class Receta extends Model
         return reviews;
     }
 
+    public void setPublicante(Usuario publicante)
+    {
+        this.publicante = publicante;
+    }
+
+    public void setExtra(RecetaExtra extra)
+    {
+        this.extra = extra;
+    }
+
+    public void addIngrediente(Ingrediente ingre)
+    {
+        ingredientes.add(ingre);
+        ingre.addReceta(this);
+    }
+
+    public void addExtra(RecetaExtra ext)
+    {
+        extra = ext;
+        ext.setReceta(this);
+    }
+
+    public void setReviews(List<RecetaReview> reviews)
+    {
+        this.reviews = reviews;
+    }
+
     @JsonIgnore
     private static final Finder<Long, Receta> finder = new Finder<>(Receta.class);
 
@@ -99,9 +130,10 @@ public class Receta extends Model
         return finder.byId(id);
     }
 
-    public static Receta findByName(String name)
+    public static Receta findByNameAndAuthor(String name, Long autorId)
     {
-        return finder.query().where().like("nombre", name).setMaxRows(1).findOne();
+        return finder.query().where().ilike("nombre", name)
+                .eq("publicante.id", autorId).setMaxRows(1).findOne();
     }
 
     public static List<Receta> findByAuthor(Long id)

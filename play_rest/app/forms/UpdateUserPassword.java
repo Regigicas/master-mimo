@@ -2,8 +2,9 @@ package forms;
 
 import misc.MiscUtils;
 import play.data.validation.Constraints;
+import play.data.validation.ValidationError;
 
-public class UpdateUserPassword
+public class UpdateUserPassword implements Constraints.Validatable<ValidationError>
 {
     @Constraints.Required
     public String oldPassword;
@@ -37,5 +38,14 @@ public class UpdateUserPassword
             return false;
 
         return true;
+    }
+
+    @Override
+    public ValidationError validate()
+    {
+        if (oldPassword.equals(newPassword))
+            return new ValidationError("ingredientes", "error.samepassword");
+
+        return null;
     }
 }

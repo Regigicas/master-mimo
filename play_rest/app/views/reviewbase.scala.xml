@@ -1,0 +1,27 @@
+@(rvw: RecetaReview)
+<review>
+    <autor>
+        <id>@rvw.autor.id</id>
+        <username>@rvw.autor.getUsername()</username>
+    </autor>
+    <receta>
+        <id>@rvw.receta.id</id>
+        <nombre>@rvw.receta.getNombre()</nombre>
+        <preparacion>@rvw.receta.preparacion</preparacion>
+        <extra>
+            <id>@rvw.receta.extra.id</id>
+            <rating>@rvw.receta.extra.getRating()</rating>
+            <fechaPublicacion>@rvw.receta.extra.fechaPublicacion</fechaPublicacion>
+        </extra>
+        <ingredientes>
+            @for(ingrd <- rvw.receta.getIngredientes()) {
+            <ingrediente>
+                <id>@ingrd.id</id>
+                <nombre>@ingrd.nombre</nombre>
+            </ingrediente>
+            }
+        </ingredientes>
+    </receta>
+    <nota>@rvw.nota</nota>
+    <texto>@rvw.texto</texto>
+</review>
