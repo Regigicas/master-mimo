@@ -10,7 +10,7 @@
         <preparacion>@rvw.receta.preparacion</preparacion>
         <extra>
             <id>@rvw.receta.extra.id</id>
-            <rating>@rvw.receta.extra.getRating()</rating>
+            <calorias>@rvw.receta.extra.getCalorias()</calorias>
             <fechaPublicacion>@rvw.receta.extra.fechaPublicacion</fechaPublicacion>
         </extra>
         <ingredientes>

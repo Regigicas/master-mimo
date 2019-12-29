@@ -3,6 +3,7 @@ package controllers;
 import actions.ValidateAccessAction;
 import forms.PostNuevaReceta;
 import forms.UsuarioAccessTryData;
+import misc.MiscUtils;
 import misc.ObtenerUsuario;
 import misc.RestError;
 import models.Ingrediente;
@@ -117,40 +118,22 @@ public class RecetaController extends Controller
     public Result postReceta(Http.Request request)
     {
         Form<PostNuevaReceta> form = formFactory.form(PostNuevaReceta.class).bindFromRequest(request);
-        if (form.hasErrors())
-        {
-            if (request.accepts("application/json"))
-                return badRequest(form.errorsAsJson());
-            else if (request.accepts("application/xml"))
-                return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
-
-            return status(415);
-        }
+        Result formResult = MiscUtils.CheckFormErrors(request, form);
+        if (formResult != null)
+            return formResult;
 
         PostNuevaReceta postData = form.get();
         ValidationError verror = postData.validate();
         if (verror != null)
         {
             form = form.withError(verror);
-            if (request.accepts("application/json"))
-                return badRequest(form.errorsAsJson());
-            else if (request.accepts("application/xml"))
-                return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
-
-            return status(415);
+            formResult = MiscUtils.CheckFormErrors(request, form);
+            return formResult;
         }
 
         Usuario user = request.attrs().get(UsuarioAccessTryData.USER_TYPEDKEY).getUsuario();
         if (Receta.findByNameAndAuthor(postData.getNombre(), user.getId()) != null)
-        {
-            RestError error = RestError.makeError(messageApi.preferred(request), 409, "error.duplicatedrecipe");
-            if (request.accepts("application/json"))
-                return status(409, play.libs.Json.toJson(error));
-            else if (request.accepts("application/xml"))
-                return status(409, views.xml.resterror.render(error));
-
-            return status(415);
-        }
+            return MiscUtils.MakeRestError(request, messageApi, 409, "error.duplicatedrecipe");
 
         Receta nuevaReceta = new Receta();
         nuevaReceta.setNombre(postData.getNombre());
@@ -158,7 +141,7 @@ public class RecetaController extends Controller
         nuevaReceta.setPublicante(user);
 
         RecetaExtra extra = new RecetaExtra();
-        extra.setRating(5.0f);
+        extra.setCalorias(postData.getCalorias() != null ? postData.getCalorias() : 0);
         extra.setFechaPublicacion(new Timestamp(System.currentTimeMillis()));
         nuevaReceta.addExtra(extra);
 
@@ -209,11 +192,97 @@ public class RecetaController extends Controller
         cache.remove(Receta.CACHE_GET_PATH);
         nuevaReceta.save();
 
-        nuevaReceta.getPublicante().setReviews(null); // No nos interesan las reviews del usuario aqui
         if (request.accepts("application/json"))
             return created(play.libs.Json.toJson(nuevaReceta));
         else if (request.accepts("application/xml"))
             return created(views.xml.receta.render(nuevaReceta));
+
+        return status(415);
+    }
+
+    public Result patchReceta(Http.Request request, Long id)
+    {
+        Form<PostNuevaReceta> form = formFactory.form(PostNuevaReceta.class).bindFromRequest(request);
+        Result formResult = MiscUtils.CheckFormErrors(request, form);
+        if (formResult != null)
+            return formResult;
+
+        PostNuevaReceta postData = form.get();
+        ValidationError verror = postData.validate();
+        if (verror != null)
+        {
+            form = form.withError(verror);
+            formResult = MiscUtils.CheckFormErrors(request, form);
+            return formResult;
+        }
+
+        Usuario user = request.attrs().get(UsuarioAccessTryData.USER_TYPEDKEY).getUsuario();
+        Receta receta = Receta.findByAuthorAndRecipe(user.getId(), id);
+        if (receta == null)
+            return notFound();
+
+        Receta recetaMismoNombre = Receta.findByNameAndAuthor(postData.getNombre(), user.getId());
+        if (recetaMismoNombre != null && recetaMismoNombre.getId() != receta.getId())
+            return MiscUtils.MakeRestError(request, messageApi, 409, "error.duplicatedrecipe");
+
+        receta.setNombre(postData.getNombre());
+        receta.setPreparacion(postData.getPreparacion());
+
+        List<String> nombresUsados = new LinkedList<>();
+        List<Ingrediente> nuevosIngredientes = new LinkedList<>();
+        if (postData.getIdIngredientes() != null)
+        {
+            for (Long ingreId : postData.getIdIngredientes())
+            {
+                Ingrediente ingre = Ingrediente.findById(ingreId);
+                if (ingre == null)
+                    return badRequest();
+
+                if (nombresUsados.contains(ingre.getNombre()))
+                    continue;;
+
+                nuevosIngredientes.add(ingre);
+                nombresUsados.add(ingre.getNombre());
+            }
+        }
+
+        boolean clearCache = true;
+        if (postData.getNombreIngredientes() != null)
+        {
+            for (String inombre : postData.getNombreIngredientes())
+            {
+                if (nombresUsados.contains(inombre))
+                    continue;;
+
+                Ingrediente ingre = Ingrediente.findByName(inombre);
+                if (ingre == null)
+                {
+                    if (clearCache)
+                    {
+                        clearCache = false;
+                        cache.remove(Ingrediente.CACHE_GET_PATH);
+                    }
+
+                    ingre = new Ingrediente();
+                    ingre.setNombre(inombre);
+                    nuevosIngredientes.add(ingre);
+                    nombresUsados.add(inombre);
+                }
+                else
+                    nuevosIngredientes.add(ingre);
+            }
+        }
+
+        cache.remove(Receta.CACHE_GET_PATH);
+        cache.remove(String.format(Receta.CACHE_GET_PATH_ID, receta.getId()));
+        receta.setIngredientes(nuevosIngredientes);
+        receta.update();
+
+        // En esta si enviamos el objeto de vuelta porque se pueden crear nuevos ingredientes
+        if (request.accepts("application/json"))
+            return ok(play.libs.Json.toJson(receta));
+        else if (request.accepts("application/xml"))
+            return ok(views.xml.receta.render(receta));
 
         return status(415);
     }

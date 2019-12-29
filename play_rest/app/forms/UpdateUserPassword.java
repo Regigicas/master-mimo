@@ -23,6 +23,16 @@ public class UpdateUserPassword implements Constraints.Validatable<ValidationErr
         return newPassword;
     }
 
+    public void setOldPassword(String oldPassword)
+    {
+        this.oldPassword = oldPassword;
+    }
+
+    public void setNewPassword(String newPassword)
+    {
+        this.newPassword = newPassword;
+    }
+
     public boolean convertPasswords()
     {
         String oldHash = MiscUtils.MakeHash(this.oldPassword.trim());

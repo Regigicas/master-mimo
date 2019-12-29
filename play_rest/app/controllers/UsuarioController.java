@@ -4,6 +4,7 @@ import actions.ValidateAccessAction;
 import com.fasterxml.jackson.databind.JsonNode;
 import forms.UpdateUserPassword;
 import forms.UsuarioAccessTryData;
+import misc.MiscUtils;
 import misc.ObtenerUsuario;
 import misc.RestError;
 import models.Usuario;
@@ -79,27 +80,13 @@ public class UsuarioController extends Controller
     public Result crearUsuario(Http.Request request)
     {
         Form<Usuario> form = formFactory.form(Usuario.class).bindFromRequest(request);
-        if (form.hasErrors())
-        {
-            if (request.accepts("application/json"))
-                return badRequest(form.errorsAsJson());
-            else if (request.accepts("application/xml"))
-                return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
-
-            return status(415);
-        }
+        Result formResult = MiscUtils.CheckFormErrors(request, form);
+        if (formResult != null)
+            return formResult;
 
         Usuario user = form.get();
         if (Usuario.findByUsername(user.getUsername()) != null)
-        {
-            RestError error = RestError.makeError(messageApi.preferred(request), 409, "error.existingUser");
-            if (request.accepts("application/json"))
-                return status(409, play.libs.Json.toJson(error));
-            else if (request.accepts("application/xml"))
-                return status(409, views.xml.resterror.render(error));
-
-            return status(415);
-        }
+            return MiscUtils.MakeRestError(request, messageApi, 409, "error.existingUser");
 
         if (!user.hashPassword())
             return internalServerError();
@@ -119,15 +106,9 @@ public class UsuarioController extends Controller
     public Result updateUserPass(Http.Request request)
     {
         Form<UpdateUserPassword> form = formFactory.form(UpdateUserPassword.class).bindFromRequest(request);
-        if (form.hasErrors())
-        {
-            if (request.accepts("application/json"))
-                return badRequest(form.errorsAsJson());
-            else if (request.accepts("application/xml"))
-                return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
-
-            return status(415);
-        }
+        Result formResult = MiscUtils.CheckFormErrors(request, form);
+        if (formResult != null)
+            return formResult;
 
         Usuario user = request.attrs().get(UsuarioAccessTryData.USER_TYPEDKEY).getUsuario();
         UpdateUserPassword updRequest = form.get();
@@ -147,15 +128,7 @@ public class UsuarioController extends Controller
             return internalServerError();
 
         if (!updRequest.getOldPassword().equals(user.getPassword()))
-        {
-            RestError error = RestError.makeError(messageApi.preferred(request), 409, "error.oldpasswordMismatch");
-            if (request.accepts("application/json"))
-                return status(409, play.libs.Json.toJson(error));
-            else if (request.accepts("application/xml"))
-                return status(409, views.xml.resterror.render(error));
-
-            return status(415);
-        }
+            return MiscUtils.MakeRestError(request, messageApi, 409, "error.oldpasswordMismatch");
 
         // No actualizamos cache porque la pass no va en rest
         user.setPassword(updRequest.getNewPassword());

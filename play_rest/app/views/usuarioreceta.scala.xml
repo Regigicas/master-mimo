@@ -5,7 +5,7 @@
     <preparacion>@rct.preparacion</preparacion>
     <extra>
         <id>@rct.extra.id</id>
-        <rating>@rct.extra.getRating()</rating>
+        <calorias>@rct.extra.getCalorias()</calorias>
         <fechaPublicacion>@rct.extra.fechaPublicacion</fechaPublicacion>
     </extra>
     <ingredientes>

@@ -2,6 +2,7 @@ package controllers;
 
 import actions.ValidateAccessAction;
 import forms.UsuarioAccessTryData;
+import misc.MiscUtils;
 import misc.ObtenerUsuario;
 import models.Receta;
 import models.RecetaReview;
@@ -39,7 +40,7 @@ public class ReviewController extends Controller
         List<RecetaReview> reviews = optReviews.orElse(null);
         if (reviews == null)
         {
-            reviews = RecetaReview.findReviewsByAuthor(id);
+            reviews = RecetaReview.findByAuthor(id);
             cache.set(cachePath, reviews, 120);
         }
 
@@ -58,7 +59,7 @@ public class ReviewController extends Controller
         List<RecetaReview> reviews = optReviews.orElse(null);
         if (reviews == null)
         {
-            reviews = RecetaReview.findReviewsByRecipe(id);
+            reviews = RecetaReview.findByRecipe(id);
             cache.set(cachePath, reviews, 120);
         }
 
@@ -73,7 +74,7 @@ public class ReviewController extends Controller
     public Result deleteReviewByRecipeAndAuthor(Http.Request request, Long recetaId)
     {
         Usuario usuario = request.attrs().get(UsuarioAccessTryData.USER_TYPEDKEY).getUsuario();
-        RecetaReview review = RecetaReview.findReviewByAuthorAndRecipe(usuario.getId(), recetaId);
+        RecetaReview review = RecetaReview.findByAuthorAndRecipe(usuario.getId(), recetaId);
         if (review != null)
         {
             cache.remove(String.format(RecetaReview.CACHE_GET_PATH_AUTOR, review.getAutor().getId()));
@@ -92,7 +93,7 @@ public class ReviewController extends Controller
         RecetaReview review = optReview.orElse(null);
         if (review == null)
         {
-            review = RecetaReview.findReviewByAuthorAndRecipe(autorId, recetaId);
+            review = RecetaReview.findByAuthorAndRecipe(autorId, recetaId);
             cache.set(cachePath, review, 120);
         }
 
@@ -120,22 +121,16 @@ public class ReviewController extends Controller
     public Result postOrUpdateReview(Http.Request request, Long recetaId)
     {
         Form<RecetaReview> form = formFactory.form(RecetaReview.class).bindFromRequest(request);
-        if (form.hasErrors())
-        {
-            if (request.accepts("application/json"))
-                return badRequest(form.errorsAsJson());
-            else if (request.accepts("application/xml"))
-                return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
-
-            return status(415);
-        }
+        Result formResult = MiscUtils.CheckFormErrors(request, form);
+        if (formResult != null)
+            return formResult;
 
         Usuario usuario = request.attrs().get(UsuarioAccessTryData.USER_TYPEDKEY).getUsuario();
-        RecetaReview review = RecetaReview.findReviewByAuthorAndRecipe(usuario.getId(), recetaId);
-        boolean nuevaReceta = false;
+        RecetaReview review = RecetaReview.findByAuthorAndRecipe(usuario.getId(), recetaId);
+        boolean nuevaReview = false;
         if (review == null)
         {
-            nuevaReceta = true;
+            nuevaReview = true;
             review = new RecetaReview();
             Receta receta = Receta.findById(recetaId);
             if (receta == null)
@@ -152,11 +147,20 @@ public class ReviewController extends Controller
         cache.remove(String.format(RecetaReview.CACHE_GET_PATH_AUTOR, review.getAutor().getId()));
         cache.remove(String.format(RecetaReview.CACHE_GET_PATH_RECETA, review.getReceta().getId()));
         cache.remove(String.format(RecetaReview.CACHE_GET_PATH_AUTOR_RECETA, review.getAutor().getId(), review.getReceta().getId()));
+        // Limpiamos tambien el de receta para que se vea la review en los GET de /recetas
+        cache.remove(Receta.CACHE_GET_PATH);
+        cache.remove(String.format(Receta.CACHE_GET_PATH_ID, review.getReceta().getId()));
 
-        if (nuevaReceta)
+        if (nuevaReview)
         {
             review.save();
-            return created();
+
+            if (request.accepts("application/json"))
+                return created(play.libs.Json.toJson(review));
+            else if (request.accepts("application/xml"))
+                return created(views.xml.review.render(review));
+
+            return status(415);
         }
 
         review.update();

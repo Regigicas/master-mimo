@@ -1,9 +1,7 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.ebean.Finder;
 import io.ebean.Model;
 import play.data.validation.Constraints;
@@ -107,6 +105,11 @@ public class Receta extends Model
         ext.setReceta(this);
     }
 
+    public void setIngredientes(List<Ingrediente> ingredientes)
+    {
+        this.ingredientes = ingredientes;
+    }
+
     public void setReviews(List<RecetaReview> reviews)
     {
         this.reviews = reviews;
@@ -139,5 +142,12 @@ public class Receta extends Model
     public static List<Receta> findByAuthor(Long id)
     {
         return finder.query().where().eq("publicante.id", id).findList();
+    }
+
+    public static Receta findByAuthorAndRecipe(Long author, Long recipe)
+    {
+        return finder.query().where()
+                .eq("publicante.id", author)
+                .eq("id", recipe).findOne();
     }
 }

@@ -5,7 +5,7 @@
     <preparacion>@rct.preparacion</preparacion>
     <extra>
         <id>@rct.extra.id</id>
-        <rating>@rct.extra.getRating()</rating>
+        <calorias>@rct.extra.getCalorias()</calorias>
         <fechaPublicacion>@rct.extra.fechaPublicacion</fechaPublicacion>
     </extra>
     <publicante>
@@ -21,6 +21,7 @@
         }
     </ingredientes>
     <reviews>
+        @if(rct.reviews != null) {
         @for(rvw <- rct.reviews) {
         <review>
             <autor>
@@ -30,6 +31,6 @@
             <nota>@rvw.nota</nota>
             <texto>@rvw.texto</texto>
         </review>
-        }
+        }}
     </reviews>
 </receta>

@@ -1,6 +1,7 @@
 package controllers;
 
 import actions.ValidateAccessAction;
+import misc.MiscUtils;
 import misc.ObtenerUsuario;
 import misc.RestError;
 import models.Ingrediente;
@@ -79,27 +80,13 @@ public class IngredienteController extends Controller
     public Result crearIngrediente(Http.Request request)
     {
         Form<Ingrediente> form = formFactory.form(Ingrediente.class).bindFromRequest(request);
-        if (form.hasErrors())
-        {
-            if (request.accepts("application/json"))
-                return badRequest(form.errorsAsJson());
-            else if (request.accepts("application/xml"))
-                return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
-
-            return status(415);
-        }
+        Result formResult = MiscUtils.CheckFormErrors(request, form);
+        if (formResult != null)
+            return formResult;
 
         Ingrediente ingrediente = form.get();
         if (Ingrediente.findByName(ingrediente.getNombre()) != null)
-        {
-            RestError error = RestError.makeError(messageApi.preferred(request), 409, "error.existingIngredient");
-            if (request.accepts("application/json"))
-                return status(409, play.libs.Json.toJson(error));
-            else if (request.accepts("application/xml"))
-                return status(409, views.xml.resterror.render(error));
-
-            return status(415);
-        }
+            return MiscUtils.MakeRestError(request, messageApi, 409, "error.existingIngredient");
 
         ingrediente.save();
         cache.remove(Ingrediente.CACHE_GET_PATH);
@@ -114,15 +101,9 @@ public class IngredienteController extends Controller
     public Result updateNombre(Http.Request request, Long id)
     {
         Form<Ingrediente> form = formFactory.form(Ingrediente.class).bindFromRequest(request);
-        if (form.hasErrors())
-        {
-            if (request.accepts("application/json"))
-                return badRequest(form.errorsAsJson());
-            else if (request.accepts("application/xml"))
-                return badRequest(views.xml.formerrors.render(form.errorsAsJson()));
-
-            return status(415);
-        }
+        Result formResult = MiscUtils.CheckFormErrors(request, form);
+        if (formResult != null)
+            return formResult;
 
         Ingrediente ingrediente = Ingrediente.findById(id);
         if (ingrediente == null)
@@ -130,26 +111,10 @@ public class IngredienteController extends Controller
 
         Ingrediente updRequest = form.get();
         if (updRequest.getNombre().equals(ingrediente.getNombre()))
-        {
-            RestError error = RestError.makeError(messageApi.preferred(request), 409, "error.ingredient.samename");
-            if (request.accepts("application/json"))
-                return status(409, play.libs.Json.toJson(error));
-            else if (request.accepts("application/xml"))
-                return status(409, views.xml.resterror.render(error));
-
-            return status(415);
-        }
+            return MiscUtils.MakeRestError(request, messageApi, 409, "error.ingredient.samename");
 
         if (Ingrediente.findByName(updRequest.getNombre()) != null)
-        {
-            RestError error = RestError.makeError(messageApi.preferred(request), 409, "error.existingIngredient");
-            if (request.accepts("application/json"))
-                return status(409, play.libs.Json.toJson(error));
-            else if (request.accepts("application/xml"))
-                return status(409, views.xml.resterror.render(error));
-
-            return status(415);
-        }
+            return MiscUtils.MakeRestError(request, messageApi, 409, "error.existingIngredient");
 
         ingrediente.setNombre(updRequest.getNombre());
         ingrediente.update();

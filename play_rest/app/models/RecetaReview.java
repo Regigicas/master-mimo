@@ -87,17 +87,17 @@ public class RecetaReview extends Model
         return finder.all();
     }
 
-    public static List<RecetaReview> findReviewsByAuthor(Long id)
+    public static List<RecetaReview> findByAuthor(Long id)
     {
         return finder.query().where().eq("autor.id", id).findList();
     }
 
-    public static List<RecetaReview> findReviewsByRecipe(Long id)
+    public static List<RecetaReview> findByRecipe(Long id)
     {
         return finder.query().where().eq("receta.id", id).findList();
     }
 
-    public static RecetaReview findReviewByAuthorAndRecipe(Long author, Long recipe)
+    public static RecetaReview findByAuthorAndRecipe(Long author, Long recipe)
     {
         return finder.query().where()
                 .eq("autor.id", author)

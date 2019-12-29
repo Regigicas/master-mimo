@@ -27,7 +27,7 @@ create table receta_ingrediente (
 
 create table receta_extra (
   id                            bigserial not null,
-  rating                        float not null,
+  calorias                      integer,
   fecha_publicacion             timestamptz,
   constraint pk_receta_extra primary key (id)
 );

@@ -20,7 +20,8 @@ GET     /recetas/:id                controllers.RecetaController.getReceta(reque
 DELETE  /recetas/:id                controllers.RecetaController.deleteReceta(request: Request, id: Long)
 DELETE  /recetas/autor              controllers.RecetaController.deleteRecetasAutor(request: Request)
 POST    /recetas                    controllers.RecetaController.postReceta(request: Request)
-# Parchear recetas, revisar los xml/json y meter tests
+PATCH   /recetas/:id                controllers.RecetaController.patchReceta(request: Request, id: Long)
+# Meter tests
 
 GET     /reviews/autor/:id          controllers.ReviewController.getReviewsAutor(request: Request, id: Long)
 GET     /reviews/receta/:id         controllers.ReviewController.getReviewsRecipe(request: Request, id: Long)
