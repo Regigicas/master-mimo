@@ -227,6 +227,8 @@ public class RecetaController extends Controller
 
         receta.setNombre(postData.getNombre());
         receta.setPreparacion(postData.getPreparacion());
+        if (postData.getCalorias() != null)
+            receta.getExtra().setCalorias(postData.getCalorias());
 
         List<String> nombresUsados = new LinkedList<>();
         List<Ingrediente> nuevosIngredientes = new LinkedList<>();
