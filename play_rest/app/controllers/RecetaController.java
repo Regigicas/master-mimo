@@ -86,7 +86,8 @@ public class RecetaController extends Controller
 
     public Result deleteReceta(Http.Request request, Long id)
     {
-        Receta receta = Receta.findById(id);
+        Usuario user = request.attrs().get(UsuarioAccessTryData.USER_TYPEDKEY).getUsuario();
+        Receta receta = Receta.findByAuthorAndRecipe(user.getId(), id);
         if (receta != null)
         {
             cache.remove(Receta.CACHE_GET_PATH);
